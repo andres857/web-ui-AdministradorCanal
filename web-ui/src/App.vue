@@ -1,0 +1,27 @@
+<template>
+  <div id="app">
+   <b-navbar toggleable="lg" type="dark" variant="success">
+     <b-container>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+          <b-navbar-brand href="/canal">Imbanaco TV</b-navbar-brand>
+        <b-collapse id="nav-collapse" is-nav>
+
+          <b-navbar-nav  style="width: 100%" align="right">
+            <b-nav-item :to="{name: 'Players'}" >Players</b-nav-item>
+            <b-nav-item :to="{name: 'Salas'}">Salas</b-nav-item>
+            <b-nav-item :to="{name: 'Canal'}">Canal</b-nav-item>
+            <b-nav-item :to="{name: 'Eventos'}">Eventos</b-nav-item>
+          </b-navbar-nav> 
+        </b-collapse> 
+     </b-container>
+   </b-navbar>
+      
+  <router-view/>
+  </div>
+</template>
+
+
+
+<style>
+
+</style>

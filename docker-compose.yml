@@ -1,0 +1,43 @@
+version: "3.0"                     
+
+services:
+  web-ui:
+    image: web-ui-dev
+    container_name: container-web-ui-dev
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile 
+    volumes:
+    - ./web-ui:/usr/src/app/my-app
+    - /usr/src/app/my-app/node_modules
+    ports:
+      - '8080:8080'
+
+  nginx-server-rtmp:
+    container_name: server-rtmp-nginx-dev
+    build:
+      context: ./server-rtmp-container
+      dockerfile: Dockerfile
+    volumes:
+      - ./server-rtmp-container/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf
+    ports:
+      - 8090:8080
+      - 1935:1935
+
+  # nginx-web:
+  #    image: nginx:1.19.0-alpine
+  #    depends_on:
+  #    - web-ui
+  #    volumes:
+  #    - ./web-ui/dist:/usr/share/nginx/html
+  #    environment:
+  #     - VIRTUAL_HOST= imbanaco.windowschannel.us #url 
+  #    ports:
+  #     - '8080:80'
+          
+networks:
+  default:
+    external:
+      name: proxy-nginx
+
+
