@@ -49,7 +49,7 @@ export default {
                 height:390, 
                 sources: [ 
                   { 
-                    src:"https://rtmpimbanaco.windowschannel.us/hls/streaming.m3u8",
+                    src:"https://rtmpetb.windowschannel.us/hls/streaming.m3u8",
                      type: "application/x-mpegURL" } ], 
                   },
 

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <b-navbar toggleable="lg" type="dark" variant="success">
+   <b-navbar toggleable="lg" type="dark" variant="dark">
      <b-container>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
           <b-navbar-brand href="/canal">Imbanaco TV</b-navbar-brand>
@@ -22,6 +22,9 @@
 
 
 
-<style>
-
+<style scoped>
+  .navbar.navbar-dark.bg-dark{
+    background-color:#00B2A9!important;
+    /* E03E52 rojo */
+ }
 </style>

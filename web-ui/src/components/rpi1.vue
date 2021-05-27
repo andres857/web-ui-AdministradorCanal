@@ -1,38 +1,52 @@
 <template>
   <b-container >
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-1 class="d-flex justify-content-between align-items-center">
+        <b-list-group-item v-b-toggle.collapse-1 @click="loadinfo" class="d-flex justify-content-between align-items-center" >
           <b-icon icon="circle-fill" :variant="background"></b-icon>
-          <span class="text-center"> Player 1</span>
+          <span class="text-center"> Consulta externa </span>
           <b-icon icon="diagram2"></b-icon>
         </b-list-group-item>
 
           <b-collapse id="collapse-1" class="mb-3" >
             <b-card>
-                <b-row>
-                    <b-col lg="6">
-                        
+                <b-row v-if="loading">
+
+                    <b-col  lg="6">
                         <span><b>Emision</b></span>
-                        <span> Lili TV</span>
-                        <b-button variant="danger" class="mt-2" @click="doPublish">Reiniciar</b-button>
-                        <!-- <span><strong>IPv4</strong></span>
+                        <span> Imbanaco <br> </span>
                         
-                        <span> 192.168.0.25</span>
+                        <span><strong>IPv4</strong></span>
+                        <span> {{receiveNews.ip4}}</span>
                         <br>
                         <span><strong>MAC</strong></span>
-                        <span> {{receiveNews.idPlayer}}</span> -->
-                        
+                        <span> {{receiveNews.MAC}}</span> 
+                                                
                     </b-col>
+
                     <b-col lg="6">
                         <b-col>
                             <b-icon icon="thermometer" font-scale="1.5"></b-icon>
-                            {{receiveNews.temp}} °C
+                            {{receiveNews.main}} °C
                         </b-col>
                         <b-col class="mt-2">
                             <b-icon icon="cpu" font-scale="1.5"></b-icon>
-                            <span> {{receiveNews.avgload}} | {{receiveNews.currentload}}</span>
+                            <span> {{receiveNews.currentLoad}} | </span>
                         </b-col>
                     </b-col>
+                </b-row>
+                <b-row align-h="center" v-else>
+                  <b-col cols="2">
+                    <b-icon icon="arrow-clockwise" animation="spin" font-scale="2"></b-icon>
+                  </b-col>
+                </b-row>
+                <b-row align-h="around">
+                  <b-col lg="4">
+                    <b-button variant="danger" class="h4 mt-3" @click="doPublish"> Reiniciar Reproductor </b-button>
+                  </b-col>
+                  <b-col lg="4">
+
+                    <b-button variant="danger" class="mt-3" > Reiniciar Player </b-button>
+                  </b-col>
                 </b-row>
                 
             </b-card>
@@ -48,9 +62,10 @@ const mqtt = require('mqtt')
 export default {
   data() {
     return {
+      loading: false,
       background:'danger',
       connection: {
-        host: '165.227.2.248',
+        host: 'broker.windowschannel.us',
         port: 8083,
         endpoint: '/mqtt',
         clean: true, // Reserved session
@@ -59,16 +74,18 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayer1lilitv',
+        clientId: 'webClientPlayerConsulta externa',
         username: 'emqx',
         password: 'public',
       },
       subscription: {
-        topic: 'valledelili/players/b8:27:eb:db:31:17/status',
+        topics: ['imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/load',
+                'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/network'],
         qos: 0,
       },
+      
       publishRestartPlayer: {
-        topic: 'valledelili/players/b8:27:eb:db:31:17/config',
+        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/urlStreaming',
         qos: 0,
         payload: '{ "restart": "true" }',
       },
@@ -81,7 +98,6 @@ export default {
       client: {
         connected: false,
       },
-      subscribeSuccess: false,
     }
   },
 
@@ -95,39 +111,50 @@ export default {
           console.log('Publish  to topics', topic)
         })
       },
+    loadinfo(){
+      this.loading = false;
+         
+        //Waste 5 seconds
+        setTimeout(() => {
+           this.loading = true;
+        }, 2000)
+    }
   },
   mounted:function(){
+      
       const { host, port, endpoint} = this.connection
       const connectUrl = `ws://${host}:${port}${endpoint}`
       try {
         this.client = mqtt.connect(connectUrl,this.options)
-      } catch (error) {
+           } catch (error) {
         console.log('mqtt.connect error', error)
-      }
+       }
+
       this.client.on('connect', () => {
-        console.log('Connection succeeded!')
-        // this.client.connected = true
+        console.log('Connection success!')
+
         this.background = 'success'
-        const { topic, qos } = this.subscription
-        this.client.subscribe(topic, { qos }, (error, res) => {
+        // suscribe to topics
+        const { topics, qos } = this.subscription
+        this.client.subscribe(topics, { qos }, (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
                 return
             }
-        this.subscribeSuccess = true
         console.log('Subscribe to topics res', res)
         })
+        
       })
       this.client.on('error', error => {
         console.log('Connection failed', error)
-        
       })
+
       this.client.on('message', (topic, message) => {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
-        // this.receiveNews=''
         this.receiveNews = JSON.parse(message);
         console.log(this.receiveNews);
+        // this.receiveNews=''
       })
   }
 }

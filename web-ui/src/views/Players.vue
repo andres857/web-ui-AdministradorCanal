@@ -15,23 +15,22 @@
       <b-col cols="12" md="8" lg="3">
           <rpi1/>
       </b-col>
-      <b-col cols="12" md="8" lg="3">
+      <!-- <b-col cols="12" md="8" lg="3">
           <rpi2/>
-      </b-col>
+      </b-col> -->
     </b-row>
   </div>
 </template>
 
 <script>
-import rpi2 from '../components/rpi2.vue'
 import rpi1 from '../components/rpi1.vue'
+// import rpi2 from '../components/rpi2.vue'
 
 export default {
   name: 'App',
   components: {
     rpi1,
-    rpi2,
-    
+    // rpi2,    
   }
 }
 </script>
