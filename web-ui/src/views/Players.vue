@@ -13,24 +13,35 @@
 
     <b-row align-h="center">
       <b-col cols="12" md="8" lg="3">
-          <rpi1/>
+          <consultaexterna/>
       </b-col>
-      <!-- <b-col cols="12" md="8" lg="3">
-          <rpi2/>
-      </b-col> -->
+      <b-col cols="12" md="8" lg="3">
+          <urgencias/>
+      </b-col>
+    </b-row>
+
+    <b-row align-h="center">
+      <b-col cols="12" md="8" lg="3">
+          <sotano/>
+      </b-col>
+      
     </b-row>
   </div>
 </template>
 
 <script>
-import rpi1 from '../components/rpi1.vue'
-// import rpi2 from '../components/rpi2.vue'
+
+import urgencias from '../components/urgencias.vue'
+import consultaexterna from '../components/consultaexterna.vue'
+import sotano from '../components/sotano.vue'
+
 
 export default {
   name: 'App',
   components: {
-    rpi1,
-    // rpi2,    
+    urgencias,
+    consultaexterna,    
+    sotano
   }
 }
 </script>

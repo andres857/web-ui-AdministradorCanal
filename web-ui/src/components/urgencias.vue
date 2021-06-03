@@ -41,12 +41,13 @@
                 </b-row>
                 <b-row align-h="around">
                   <b-col lg="4">
-                    <b-button variant="danger" class="h4 mt-3" @click="doPublish"> Reiniciar Reproductor </b-button>
+                    <b-button variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col lg="4">
 
-                    <b-button variant="danger" class="mt-3" > Reiniciar Player </b-button>
+                    <b-button variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
                   </b-col>
+                                      <b-button variant="danger" class="mt-3" @click="doPublishUrlStreaming"> Cambiar UrlStreaming </b-button>
                 </b-row>
                 
             </b-card>
@@ -84,25 +85,45 @@ export default {
         qos: 0,
       },
       
+      publishRestartDevice: {
+        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/config',
+        qos: 0,
+        payload: '{ "restart": "device" }',
+      },
+
       publishRestartPlayer: {
+        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/config',
+        qos: 0,
+        payload: '{ "restart": "player" }',
+      },
+
+      publishUrlStreaming: {
         topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/urlStreaming',
         qos: 0,
-        payload: '{ "restart": "true" }',
+        payload: '{ "urlStreaming":"rtsp://192.168.5.223/InstitucionalTv" }',
       },
+
       receiveNews: '',
       qosList: [
         { label: 0, value: 0 },
         { label: 1, value: 1 },
         { label: 2, value: 2 },
       ],
-      client: {
-        connected: false,
-      },
     }
   },
 
   methods: {
-    doPublish() {
+    doPublishRestartDevice() {
+        const { topic, qos, payload } = this.publishRestartDevice
+        this.client.publish(topic, payload, qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', topic)
+        })
+    },
+
+    doPublishpublishRestartPlayer() {
         const { topic, qos, payload } = this.publishRestartPlayer
         this.client.publish(topic, payload, qos, error => {
           if (error) {
@@ -110,7 +131,18 @@ export default {
           }
           console.log('Publish  to topics', topic)
         })
-      },
+    },
+
+    doPublishUrlStreaming() {
+        const { topic, qos, payload } = this.publishUrlStreaming
+        this.client.publish(topic, payload, qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', topic)
+        })
+    },
+
     loadinfo(){
       this.loading = false;
          
