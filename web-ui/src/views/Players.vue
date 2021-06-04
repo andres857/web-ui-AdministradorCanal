@@ -11,36 +11,34 @@
         </b-col>
     </b-row>
 
+
     <b-row align-h="center">
-      <b-col cols="12" md="8" lg="3">
-          <consultaexterna/>
-      </b-col>
-      <b-col cols="12" md="8" lg="3">
-          <urgencias/>
+      <b-col cols="5" >
+          <sotano/>
       </b-col>
     </b-row>
 
-    <b-row align-h="center">
-      <b-col cols="12" md="8" lg="3">
-          <sotano/>
+    <!-- <b-row  align-h="center">
+      <b-col cols="5">
+          <urgencias/>
       </b-col>
-      
-    </b-row>
+    </b-row> -->
+
   </div>
 </template>
 
 <script>
 
-import urgencias from '../components/urgencias.vue'
-import consultaexterna from '../components/consultaexterna.vue'
+// import urgencias from '../components/urgencias.vue'
+// import consultaexterna from '../components/consultaexterna.vue'
 import sotano from '../components/sotano.vue'
 
 
 export default {
   name: 'App',
   components: {
-    urgencias,
-    consultaexterna,    
+    // urgencias,
+    // consultaexterna,    
     sotano
   }
 }

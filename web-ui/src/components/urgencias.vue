@@ -1,58 +1,88 @@
 <template>
-  <b-container >
+  <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-1 @click="loadinfo" class="d-flex justify-content-between align-items-center" >
-          <b-icon icon="circle-fill" :variant="background"></b-icon>
-          <span class="text-center"> Consulta externa </span>
-          <b-icon icon="diagram2"></b-icon>
+        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer"  class="d-flex justify-content-between align-items-center" >
+          
+          <b-container >
+            <b-row align-h="start">
+
+              <b-col cols="2">
+                <b-icon style="margin-right: 15px" font-scale="1" icon="circle-fill" :variant="background"></b-icon>
+                <b-icon icon="display"></b-icon>
+              </b-col>
+
+              <b-col cols="3">
+                <span class="text-center"> Sotano </span> |
+                <span class="text-center"> Tv1 </span>
+              </b-col>
+
+              <b-col cols="6">
+                <span class="text-center"> <b> Emision </b> </span> |
+                <span class="text-center"> Comercial : Caracol 135 </span>
+              </b-col>
+      
+            </b-row>
+
+          </b-container>
+            
+
         </b-list-group-item>
 
-          <b-collapse id="collapse-1" class="mb-3" >
+          <b-collapse id="collapse-3" class="mb-3" >
             <b-card>
-                <b-row v-if="loading">
+                <b-container>
+                  <b-row >
 
-                    <b-col  lg="6">
-                        <span><b>Emision</b></span>
-                        <span> Imbanaco <br> </span>
+                    <b-col cols="6" >
                         
-                        <span><strong>IPv4</strong></span>
-                        <span> {{receiveNews.ip4}}</span>
-                        <br>
-                        <span><strong>MAC</strong></span>
-                        <span> {{receiveNews.MAC}}</span> 
+                        <div class="mt-1">
+                          <span><strong>IPv4</strong></span>
+                          <span> {{receiveNews.ip4}}</span>
+                          <br>
+                          <span><strong>MAC</strong></span>
+                          <span> {{receiveNews.MAC}}</span> 
+                        </div>
                                                 
                     </b-col>
 
-                    <b-col lg="6">
+                    <b-col cols="6">
                         <b-col>
                             <b-icon icon="thermometer" font-scale="1.5"></b-icon>
-                            {{receiveNews.main}} °C
+                            {{receiveNews.main}} °C 
+                            
                         </b-col>
                         <b-col class="mt-2">
                             <b-icon icon="cpu" font-scale="1.5"></b-icon>
-                            <span> {{receiveNews.currentLoad}} | </span>
+                            <span> {{receiveNews.currentLoad}}%  </span>
                         </b-col>
                     </b-col>
                 </b-row>
-                <b-row align-h="center" v-else>
-                  <b-col cols="2">
-                    <b-icon icon="arrow-clockwise" animation="spin" font-scale="2"></b-icon>
+
+                <b-row align-h="center">
+                  <b-col cols="8">
+                      <b-form-input size="sm" class="mt-3" v-model="NuevoCanal" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
                   </b-col>
+                  <b-col cols="4" style="margin-left: -25px">
+                      <b-button size="sm" variant="success" class="mt-3" @click="doPublishUrlStreaming"> Cambiar Emision </b-button>
+                  </b-col>
+
                 </b-row>
-                <b-row align-h="around">
-                  <b-col lg="4">
+                <b-row class="mt-1" align-h="center">
+                  
+                  <b-col cols="5">
                     <b-button variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
                   </b-col>
-                  <b-col lg="4">
-
+                  <b-col cols="4">
                     <b-button variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
                   </b-col>
-                                      <b-button variant="danger" class="mt-3" @click="doPublishUrlStreaming"> Cambiar UrlStreaming </b-button>
+
                 </b-row>
+                </b-container>
                 
             </b-card>
           </b-collapse>
-      </b-list-group>
+    </b-list-group>
+    {{NuevoCanal}}
   </b-container>
 </template>
 
@@ -63,8 +93,8 @@ const mqtt = require('mqtt')
 export default {
   data() {
     return {
-      loading: false,
       background:'danger',
+
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -75,32 +105,38 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerConsulta externa',
+        clientId: 'webClientPlayerurgencias',
         username: 'emqx',
         password: 'public',
       },
+      
       subscription: {
-        topics: ['imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/load',
-                'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/network'],
+        topics: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/status',
         qos: 0,
       },
       
       publishRestartDevice: {
-        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/config',
+        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/config',
         qos: 0,
         payload: '{ "restart": "device" }',
       },
 
       publishRestartPlayer: {
-        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/config',
+        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/config',
         qos: 0,
         payload: '{ "restart": "player" }',
       },
 
       publishUrlStreaming: {
-        topic: 'imbanaco/principal/players/Consulta externa/tv1/b82ff49997ab44e98f5992f1e5522dc2/urlStreaming',
+        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/urlStreaming',
         qos: 0,
         payload: '{ "urlStreaming":"rtsp://192.168.5.223/InstitucionalTv" }',
+      },
+
+      publishGetStatus: {
+        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus',
+        qos: 0,
+        payload: '{ "getstatus": "true" }',
       },
 
       receiveNews: '',
@@ -113,6 +149,16 @@ export default {
   },
 
   methods: {
+    
+    getStatusPlayer() {
+        const { topic, qos, payload } = this.publishGetStatus
+        this.client.publish(topic, payload, qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', topic)
+        })
+    },
     doPublishRestartDevice() {
         const { topic, qos, payload } = this.publishRestartDevice
         this.client.publish(topic, payload, qos, error => {
@@ -143,19 +189,13 @@ export default {
         })
     },
 
-    loadinfo(){
-      this.loading = false;
-         
-        //Waste 5 seconds
-        setTimeout(() => {
-           this.loading = true;
-        }, 2000)
-    }
+
   },
   mounted:function(){
       
       const { host, port, endpoint} = this.connection
       const connectUrl = `ws://${host}:${port}${endpoint}`
+
       try {
         this.client = mqtt.connect(connectUrl,this.options)
            } catch (error) {
@@ -185,8 +225,7 @@ export default {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
-        console.log(this.receiveNews);
-        // this.receiveNews=''
+        console.log(this.receiveNews)
       })
   }
 }
