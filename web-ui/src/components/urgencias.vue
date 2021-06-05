@@ -109,7 +109,7 @@ export default {
         username: 'emqx',
         password: 'public',
       },
-      
+
       subscription: {
         topics: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/status',
         qos: 0,
@@ -140,6 +140,14 @@ export default {
       },
 
       receiveNews: '',
+
+      topics: [
+          {obtenerestatus:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
+          {publicarRestartPlayer:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
+          {publicarRestartDevice:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
+          {publicarUrlStreaming:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
+        ],
+
       qosList: [
         { label: 0, value: 0 },
         { label: 1, value: 1 },
@@ -149,18 +157,19 @@ export default {
   },
 
   methods: {
-    
-    getStatusPlayer() {
-        const { topic, qos, payload } = this.publishGetStatus
-        this.client.publish(topic, payload, qos, error => {
+
+    doPublishpublishRestartPlayer() {
+        const { topic, qos, payload } = this.publishRestartPlayer
+        this.client.publish(this.topics.publicarRestartPlayer, payload, qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish in the topics', this.topics.publicarRestartPlayer)
         })
     },
+    
     doPublishRestartDevice() {
-        const { topic, qos, payload } = this.publishRestartDevice
+        const { topic, qos, payload } = this.publish
         this.client.publish(topic, payload, qos, error => {
           if (error) {
             console.log('Publish error', error)
@@ -169,15 +178,15 @@ export default {
         })
     },
 
-    doPublishpublishRestartPlayer() {
-        const { topic, qos, payload } = this.publishRestartPlayer
-        this.client.publish(topic, payload, qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', topic)
-        })
-    },
+    // doPublishpublishRestartPlayer() {
+    //     const { topic, qos, payload } = this.publishRestartPlayer
+    //     this.client.publish(topic, payload, qos, error => {
+    //       if (error) {
+    //         console.log('Publish error', error)
+    //       }
+    //       console.log('Publish  to topics', topic)
+    //     })
+    // },
 
     doPublishUrlStreaming() {
         const { topic, qos, payload } = this.publishUrlStreaming
@@ -230,3 +239,5 @@ export default {
   }
 }
 </script>
+
+

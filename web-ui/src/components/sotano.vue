@@ -83,7 +83,7 @@
           </b-collapse>
     </b-list-group>
                                            {{NuevoCanal}}
-
+                                           
   </b-container>
 </template>
 
@@ -110,34 +110,28 @@ export default {
         username: 'emqx',
         password: 'public',
       },
-      subscription: {
-        topics: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/status',
-        qos: 0,
+
+      topics: {
+        subscriber:{
+          status:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/status'
+        },
+        publish:{
+          RestartPlayer:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
+          RestartDevice:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
+          getStatus: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
+          urlStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming',
+        },
+      },
+
+      
+      payloads:{
+        restartDevice:'{ "restart": "device" }',
+        restartPlayer:'{ "restart": "player" }',
+        getStatus: '{ "getstatus": "true" }',
+        urlStreaming:'{ "urlStreaming":"rtsp://192.168.5.223/InstitucionalTv" }'
       },
       
-      publishRestartDevice: {
-        topic: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
-        qos: 0,
-        payload: '{ "restart": "device" }',
-      },
-
-      publishRestartPlayer: {
-        topic: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
-        qos: 0,
-        payload: '{ "restart": "player" }',
-      },
-
-      publishUrlStreaming: {
-        topic: `imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming`,
-        qos: 0,
-        payload: '{ "urlStreaming":"rtsp://192.168.5.223/InstitucionalTv" }',
-      },
-
-      publishGetStatus: {
-        topic: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
-        qos: 0,
-        payload: '{ "getstatus": "true" }',
-      },
+      qos: 0,
 
       receiveNews: '',
       qosList: [
@@ -149,48 +143,45 @@ export default {
   },
 
   methods: {
-    
-    getStatusPlayer() {
-        const { topic, qos, payload } = this.publishGetStatus
-        this.client.publish(topic, payload, qos, error => {
+
+    doPublishpublishRestartPlayer() {        
+        this.client.publish(this.topics.publish.RestartPlayer, this.payloads.restartPlayer, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish in the topic', this.topics.publish.RestartPlayer)
+          console.log('message publlish', this.payloads.restartDevice);
         })
     },
-    doPublishRestartDevice() {
-        const { topic, qos, payload } = this.publishRestartDevice
-        this.client.publish(topic, payload, qos, error => {
+    
+    getStatusPlayer() {
+        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish  to topics', this.topics.publish.getStatus)
         })
     },
 
-    doPublishpublishRestartPlayer() {
-        const { topic, qos, payload } = this.publishRestartPlayer
-        this.client.publish(topic, payload, qos, error => {
+    doPublishRestartDevice() {
+        this.client.publish(this.topics.publish.RestartDevice, this.payloads.restartDevice, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish  to topics', this.topics.publish.RestartDevice)
         })
     },
 
     doPublishUrlStreaming() {
-        const { topic, qos, payload } = this.publishUrlStreaming
-        this.client.publish(topic, payload, qos, error => {
+        this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish  to topics', this.topics.publish.urlStreaming)
         })
     },
-
-
   },
+
   mounted:function(){
       
       const { host, port, endpoint} = this.connection
@@ -207,8 +198,8 @@ export default {
 
         this.background = 'success'
         // suscribe to topics
-        const { topics, qos } = this.subscription
-        this.client.subscribe(topics, { qos }, (error, res) => {
+        
+        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
                 return
