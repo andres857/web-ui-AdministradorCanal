@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer"  class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-4 @click="dogetcurrentStreaming"  class="d-flex justify-content-between align-items-center" >
           
           <b-container >
             <b-row align-h="start">
@@ -12,13 +12,12 @@
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Sotano </span> |
-                <span class="text-center"> Tv1 </span>
+                <span class="text-center"> Administrador de Emision </span> |
               </b-col>
 
               <b-col cols="4">
                 <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.emision}} </span>
+                <span class="text-center"> {{receiveNews.currentStreaming}} </span>
               </b-col>
 
               <b-col cols="3">
@@ -32,7 +31,7 @@
 
         </b-list-group-item>
 
-          <b-collapse id="collapse-3" class="mb-3" >
+          <b-collapse id="collapse-4" class="mb-3" >
             <b-card>
                 <b-container>
                   <b-row >
@@ -63,24 +62,11 @@
                 </b-row>
 
                 <b-row align-h="center">
-                  <b-col cols="8">
-                      <b-form-input size="sm" class="mt-3" v-model="NuevoCanal" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
-                  </b-col>
                   <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" @click="doPublishUrlStreaming"> Cambiar Emision </b-button>
+                      <b-button size="sm" variant="success" class="mt-3" @click="dochangeStreaming" > Cambiar Emision </b-button>
                   </b-col>
-
                 </b-row>
-                <b-row class="mt-1" align-h="center">
-                  
-                  <b-col cols="5">
-                    <b-button variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-button variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
-                  </b-col>
-
-                </b-row>
+                
                 </b-container>
                 
             </b-card>
@@ -120,24 +106,18 @@ export default {
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/status',
-          currentStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/currentStreaming',
+          currentStreaming:'imbanaco/principal/alternadora/rjhgejhge/currentStreaming',
         },
         publish:{
-          RestartPlayer:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
-          RestartDevice:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
-          getStatus: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
-          urlStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming',
-
+          getChannel:'imbanaco/principal/alternadora/rjhgejhge/getChannel',
+          changeStreaming:'imbanaco/principal/alternadora/rjhgejhge/changeStreaming',
         },
       },
 
-      
       payloads:{
-        restartDevice:'{ "restart": "device" }',
-        restartPlayer:'{ "restart": "player" }',
-        getStatus: '{ "getstatus": "true" }',
-        urlStreaming:'{ "urlStreaming":"https://www.youtube.com/watch?v=pBeXhdvjRKc" }'
+        getChannel: '{ "getChannel": "true" }',
+        changeStreaming:'{ "changeStreaming": "true" }',
+        changeStreamingToInstitucional: '{ "changeStreaming": "Institucional" }',
       },
       
       qos: 0,
@@ -152,45 +132,23 @@ export default {
   },
 
   methods: {
-
-    doPublishpublishRestartPlayer() {        
-        this.client.publish(this.topics.publish.RestartPlayer, this.payloads.restartPlayer, this.qos, error => {
+      dogetcurrentStreaming(){
+        this.client.publish(this.topics.publish.getChannel, this.payloads.getChannel, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish in the topic', this.topics.publish.RestartPlayer)
-          console.log('message publlish', this.payloads.restartDevice);
+          console.log('Publish in the topic', this.topics.publish.getChannel)
         })
-    },
-    
-    getStatusPlayer() {
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+      },
+
+      dochangeStreaming(){
+        this.client.publish(this.topics.publish.changeStreaming, this.payloads.changeStreaming, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
+          console.log('Publish in the topic', this.topics.publish.changeStreaming)
         })
-    },
-
-
-
-    doPublishRestartDevice() {
-        this.client.publish(this.topics.publish.RestartDevice, this.payloads.restartDevice, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.RestartDevice)
-        })
-    },
-
-    doPublishUrlStreaming() {
-        this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.urlStreaming)
-        })
-    },
+      },
   },
 
   mounted:function(){
@@ -210,14 +168,6 @@ export default {
         this.background = 'success'
         // suscribe to topics
         
-        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
-            if (error) {
-                console.log('Subscribe to topics error', error)
-                return
-            }
-        console.log('Subscribe to topics res', res)
-        }),
-
         this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)

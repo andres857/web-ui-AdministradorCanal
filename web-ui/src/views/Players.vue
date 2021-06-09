@@ -12,34 +12,34 @@
     </b-row>
 
 
-    <b-row align-h="center">
+    <!-- <b-row align-h="center">
       <b-col cols="5" >
           <sotano/>
       </b-col>
-    </b-row>
-
-    <!-- <b-row  align-h="center">
-      <b-col cols="5">
-          <urgencias/>
-      </b-col>
     </b-row> -->
+
+    <b-row  align-h="center">
+      <b-col cols="5">
+          <alternadora/>
+      </b-col>
+    </b-row>
 
   </div>
 </template>
 
 <script>
 
-// import urgencias from '../components/urgencias.vue'
+import alternadora from '../components/alternadora.vue'
 // import consultaexterna from '../components/consultaexterna.vue'
-import sotano from '../components/sotano.vue'
+// import sotano from '../components/sotano.vue'
 
 
 export default {
   name: 'App',
   components: {
-    // urgencias,
+    alternadora,
     // consultaexterna,    
-    sotano
+    // sotano
   }
 }
 </script>
