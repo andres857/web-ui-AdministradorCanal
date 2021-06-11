@@ -22,7 +22,7 @@
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Imbanaco TV </span>
+                <span class="text-center"> Imbanaco TV  </span>
               </b-col>
       
             </b-row>
@@ -100,6 +100,7 @@ const mqtt = require('mqtt')
 export default {
   data() {
     return {
+      status:'',
       background:'danger',
       NuevoCanal:'',
       emision:'',
@@ -159,7 +160,6 @@ export default {
             console.log('Publish error', error)
           }
           console.log('Publish in the topic', this.topics.publish.RestartPlayer)
-          console.log('message publlish', this.payloads.restartDevice);
         })
     },
     
@@ -171,8 +171,6 @@ export default {
           console.log('Publish  to topics', this.topics.publish.getStatus)
         })
     },
-
-
 
     doPublishRestartDevice() {
         this.client.publish(this.topics.publish.RestartDevice, this.payloads.restartDevice, this.qos, error => {
@@ -207,9 +205,6 @@ export default {
       this.client.on('connect', () => {
         console.log('Connection success!')
 
-        this.background = 'success'
-        // suscribe to topics
-        
         this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
@@ -225,8 +220,16 @@ export default {
             }
         console.log('Subscribe to topics res', res)
         })
+
+        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', this.topics.publish.getStatus)
+        })
         
       })
+
       this.client.on('error', error => {
         console.log('Connection failed', error)
       })
@@ -235,6 +238,9 @@ export default {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
+        if (this.receiveNews.status === 'connected') {
+             this.background = 'success'
+        }
         console.log(this.receiveNews)
       })
   }
