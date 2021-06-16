@@ -14,15 +14,16 @@
 
     <b-row align-h="center">
       <b-col cols="5" >
-          <sotano/>
+          <sotano sala="Sotano" tv="1"/>
       </b-col>
+      
     </b-row>
 
-    <!-- <b-row  align-h="center">
+    <b-row  align-h="center">
       <b-col cols="5">
-          <alternadora/>
+          <urologia sala="Urologia" tv="1"/>
       </b-col>
-    </b-row> -->
+    </b-row>
 
   </div>
 </template>
@@ -30,7 +31,7 @@
 <script>
 
 // import alternadora from '../components/alternadora.vue'
-// import consultaexterna from '../components/consultaexterna.vue'
+import urologia from '../components/urologia.vue'
 import sotano from '../components/sotano.vue'
 
 
@@ -38,7 +39,7 @@ export default {
   name: 'App',
   components: {
     // alternadora,
-    // consultaexterna,    
+    urologia,    
     sotano
   }
 }

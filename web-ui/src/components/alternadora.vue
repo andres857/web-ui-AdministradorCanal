@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-4 @click="dogetcurrentStreaming"  class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-4 class="d-flex justify-content-between align-items-center">
           
           <b-container >
             <b-row align-h="start">
@@ -12,16 +12,16 @@
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Administrador de Emision </span> |
+                <span class="text-center"> {{sala}} </span> 
               </b-col>
 
               <b-col cols="4">
                 <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.currentStreaming}} </span>
+                <span class="text-center"> {{receiveNews.emision}} </span>
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Imbanaco TV </span>
+                <span class="text-center"> Imbanaco TV  </span>
               </b-col>
       
             </b-row>
@@ -37,22 +37,19 @@
                   <b-row >
 
                     <b-col cols="6" >
-                        
                         <div class="mt-1">
                           <span><strong>IPv4</strong></span>
                           <span> {{receiveNews.ip4}}</span>
                           <br>
                           <span><strong>MAC</strong></span>
                           <span> {{receiveNews.MAC}}</span> 
-                        </div>
-                                                
+                        </div>           
                     </b-col>
 
                     <b-col cols="6">
                         <b-col>
                             <b-icon icon="thermometer" font-scale="1.5"></b-icon>
                             {{receiveNews.main}} °C 
-                            
                         </b-col>
                         <b-col class="mt-2">
                             <b-icon icon="cpu" font-scale="1.5"></b-icon>
@@ -61,21 +58,31 @@
                     </b-col>
                 </b-row>
 
-                <b-row align-h="center">
-                  <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" @click="dochangeStreaming" > Cambiar Emision </b-button>
-                  </b-col>
-                </b-row>
-                
                 </b-container>
-                
             </b-card>
           </b-collapse>
-    </b-list-group>
-      {{NuevoCanal}}
-    <b-button variant="danger" class="mt-3" > Obtener emision actual </b-button>
+    </b-list-group>       
+    <b-row align-h="around" style="text-align:center">   
 
-                                           
+      <b-col cols='3' class="p-2" >
+          <b-img width="250" height="150" :src="imbanaco" @click="doChangeChannelImbanaco"></b-img>
+      </b-col>  
+
+      <b-col cols='2' class="p-2" >
+        <b-img width="150" height="150" :src="rcn" @click="doChangeChannelRcn"></b-img>
+
+      </b-col>
+
+      <b-col cols='2' class="p-2" >
+        <b-img width="150" height="150" :src="colombia" @click="doChangeChannelColombia"></b-img>
+      </b-col>
+
+      <b-col cols='2' class="p-3"  >
+        <b-img width="120" height="120" :src="caracol" @click="doChangeChannelCaracol"></b-img>
+      </b-col>
+
+    </b-row>    
+
   </b-container>
 </template>
 
@@ -84,11 +91,21 @@
 const mqtt = require('mqtt')
 
 export default {
+  props:[
+    'sala',
+  ],
+
   data() {
     return {
+      caracol: require('../assets/Caracol.svg'),
+      colombia: require('../assets/Colombia.svg'),
+      rcn: require('../assets/rcn.svg'),
+      imbanaco: require('../assets/imbanaco.svg'),
+      status:'',
       background:'danger',
       NuevoCanal:'',
       emision:'',
+      newStreaming:'',
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -99,7 +116,7 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerSotano',
+        clientId: 'webClientAlternadora',
         username: 'emqx',
         password: 'public',
       },
@@ -107,17 +124,24 @@ export default {
       topics: {
         subscriber:{
           currentStreaming:'imbanaco/principal/alternadora/rjhgejhge/currentStreaming',
+          status:'imbanaco/principal/alternadora/rjhgejhge/status',
         },
         publish:{
           getChannel:'imbanaco/principal/alternadora/rjhgejhge/getChannel',
-          changeStreaming:'imbanaco/principal/alternadora/rjhgejhge/changeStreaming',
+          getStatus:'imbanaco/principal/alternadora/rjhgejhge/getStatus',
+          channel:'imbanaco/principal/alternadora/rjhgejhge/channel'
         },
       },
 
       payloads:{
         getChannel: '{ "getChannel": "true" }',
-        changeStreaming:'{ "changeStreaming": "true" }',
+        getStatus:'{ "status": "get" }',
         changeStreamingToInstitucional: '{ "changeStreaming": "Institucional" }',
+
+        changeChangeCaracol: '{ "channel": "caracol" }',
+        changeChangeColombia: '{ "channel": "colombia" }',
+        changeChangercn: '{ "channel": "rcn" }',
+        changeChangeImbanaco: '{ "channel": "imbanaco" }',
       },
       
       qos: 0,
@@ -132,6 +156,44 @@ export default {
   },
 
   methods: {
+
+    doChangeChannelCaracol(){
+        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeCaracol, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.channel)
+        })
+      },
+
+      doChangeChannelColombia(){
+        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeColombia, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.channel)
+        })
+      },
+
+      doChangeChannelRcn(){
+        this.client.publish(this.topics.publish.channel, this.payloads.changeChangercn, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.channel)
+        })
+      },
+
+      doChangeChannelImbanaco(){
+        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeImbanaco, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.channel)
+        })
+      },
+
+      
       dogetcurrentStreaming(){
         this.client.publish(this.topics.publish.getChannel, this.payloads.getChannel, this.qos, error => {
           if (error) {
@@ -149,6 +211,7 @@ export default {
           console.log('Publish in the topic', this.topics.publish.changeStreaming)
         })
       },
+   
   },
 
   mounted:function(){
@@ -165,18 +228,24 @@ export default {
       this.client.on('connect', () => {
         console.log('Connection success!')
 
-        this.background = 'success'
-        // suscribe to topics
-        
-        this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
+
+        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
                 return
             }
         console.log('Subscribe to topics res', res)
         })
+
+        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', this.topics.publish.getStatus)
+        })
         
       })
+
       this.client.on('error', error => {
         console.log('Connection failed', error)
       })
@@ -185,6 +254,11 @@ export default {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
+        if (this.receiveNews.status === 'connected') {
+             this.background = 'success'
+        }else{
+          this.background = 'danger'
+        }
         console.log(this.receiveNews)
       })
   }

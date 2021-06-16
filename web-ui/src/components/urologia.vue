@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer"  class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-4 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
           
           <b-container >
             <b-row align-h="start">
@@ -12,13 +12,17 @@
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Sotano </span> |
-                <span class="text-center"> Tv1 </span>
+                <span class="text-center"> {{sala}} </span> |
+                <span class="text-center"> Tv{{tv}} </span>
               </b-col>
 
-              <b-col cols="6">
+              <b-col cols="4">
                 <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> Comercial : Caracol 135 </span>
+                <span class="text-center"> {{receiveNews.emision}} </span>
+              </b-col>
+
+              <b-col cols="3">
+                <span class="text-center"> Imbanaco TV  </span>
               </b-col>
       
             </b-row>
@@ -28,7 +32,7 @@
 
         </b-list-group-item>
 
-          <b-collapse id="collapse-3" class="mb-3" >
+          <b-collapse id="collapse-4" class="mb-3" >
             <b-card>
                 <b-container>
                   <b-row >
@@ -58,31 +62,30 @@
                     </b-col>
                 </b-row>
 
-                <b-row align-h="center">
+                <!-- button for a url to change streaming -->
+                <!-- <b-row align-h="center">
                   <b-col cols="8">
-                      <b-form-input size="sm" class="mt-3" v-model="NuevoCanal" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
+                      <b-form-input size="sm" class="mt-3" v-model="newStreaming" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
                   </b-col>
                   <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" @click="doPublishUrlStreaming"> Cambiar Emision </b-button>
+                      <b-button size="sm" variant="success" class="mt-3" > Cambiar Emision </b-button>
                   </b-col>
+                </b-row> -->
+                <!-- button for a url to change streaming -->
 
-                </b-row>
                 <b-row class="mt-1" align-h="center">
                   
-                  <b-col cols="5">
-                    <b-button variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
+                  <b-col cols="4">
+                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col cols="4">
-                    <b-button variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
+                    <b-button size="sm" variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
                   </b-col>
-
                 </b-row>
                 </b-container>
-                
             </b-card>
           </b-collapse>
-    </b-list-group>
-    {{NuevoCanal}}
+    </b-list-group>                        
   </b-container>
 </template>
 
@@ -91,10 +94,18 @@
 const mqtt = require('mqtt')
 
 export default {
+  props:[
+    'sala',
+    'tv',
+  ],
+
   data() {
     return {
+      status:'',
       background:'danger',
-
+      NuevoCanal:'',
+      emision:'',
+      newStreaming:'',
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -105,49 +116,33 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerurgencias',
+        clientId: 'webClientPlayerUrologia',
         username: 'emqx',
         password: 'public',
       },
 
-      subscription: {
-        topics: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/status',
-        qos: 0,
+      topics: {
+        subscriber:{
+          status:'imbanaco/principal/players/urologia/tv1/b82ff49997ab44e98f5992f1e5522dc2/status',
+          currentStreaming:'imbanaco/principal/players/urologia/tv1/b82ff49997ab44e98f5992f1e5522dc2/currentStreaming',
+        },
+        publish:{
+          restart:'imbanaco/principal/players/urologia/tv1/b82ff49997ab44e98f5992f1e5522dc2/restart',
+          getStatus: 'imbanaco/principal/players/urologia/tv1/b82ff49997ab44e98f5992f1e5522dc2/getstatus',
+          urlStreaming:'imbanaco/principal/players/urologia/tv1/b82ff49997ab44e98f5992f1e5522dc2/urlStreaming',
+        },
+      },
+
+      payloads:{
+        restartDevice:'{ "restart": "device" }',
+        restartPlayer:'{ "restart": "player" }',
+        getStatus: '{ "getstatus": "true" }',
+        urlStreaming: `{ "urlStreaming":"rtsp://loquesea" }`,
       },
       
-      publishRestartDevice: {
-        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/config',
-        qos: 0,
-        payload: '{ "restart": "device" }',
-      },
-
-      publishRestartPlayer: {
-        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/config',
-        qos: 0,
-        payload: '{ "restart": "player" }',
-      },
-
-      publishUrlStreaming: {
-        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/urlStreaming',
-        qos: 0,
-        payload: '{ "urlStreaming":"rtsp://192.168.5.223/InstitucionalTv" }',
-      },
-
-      publishGetStatus: {
-        topic: 'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus',
-        qos: 0,
-        payload: '{ "getstatus": "true" }',
-      },
+      qos: 0,
 
       receiveNews: '',
-
-      topics: [
-          {obtenerestatus:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
-          {publicarRestartPlayer:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
-          {publicarRestartDevice:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
-          {publicarUrlStreaming:'imbanaco/principal/players/urgencias/tv1/ef8226d35f8246db8ea4fc7a4292f9a4/getstatus'},
-        ],
-
       qosList: [
         { label: 0, value: 0 },
         { label: 1, value: 1 },
@@ -158,48 +153,45 @@ export default {
 
   methods: {
 
-    doPublishpublishRestartPlayer() {
-        const { topic, qos, payload } = this.publishRestartPlayer
-        this.client.publish(this.topics.publicarRestartPlayer, payload, qos, error => {
+   getStatusPlayer() {
+        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish in the topics', this.topics.publicarRestartPlayer)
+          console.log('Publish  to topics', this.topics.publish.getStatus)
+          
+        })
+    },
+
+    doPublishpublishRestartPlayer() {        
+        this.client.publish(this.topics.publish.restart, this.payloads.restartPlayer, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.restart)
         })
     },
     
     doPublishRestartDevice() {
-        const { topic, qos, payload } = this.publish
-        this.client.publish(topic, payload, qos, error => {
+        this.client.publish(this.topics.publish.restart, this.payloads.restartDevice, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish  to topics', this.topics.publish.restart)
         })
     },
 
-    // doPublishpublishRestartPlayer() {
-    //     const { topic, qos, payload } = this.publishRestartPlayer
-    //     this.client.publish(topic, payload, qos, error => {
-    //       if (error) {
-    //         console.log('Publish error', error)
-    //       }
-    //       console.log('Publish  to topics', topic)
-    //     })
-    // },
+    doPublishNewStreaming() {
 
-    doPublishUrlStreaming() {
-        const { topic, qos, payload } = this.publishUrlStreaming
-        this.client.publish(topic, payload, qos, error => {
+        this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', topic)
+          console.log('Publish  to topics', this.topics.publish.urlStreaming)
         })
     },
-
-
   },
+
   mounted:function(){
       
       const { host, port, endpoint} = this.connection
@@ -214,18 +206,31 @@ export default {
       this.client.on('connect', () => {
         console.log('Connection success!')
 
-        this.background = 'success'
-        // suscribe to topics
-        const { topics, qos } = this.subscription
-        this.client.subscribe(topics, { qos }, (error, res) => {
+        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
+            if (error) {
+                console.log('Subscribe to topics error', error)
+                return
+            }
+        console.log('Subscribe to topics res', res)
+        }),
+
+        this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
                 return
             }
         console.log('Subscribe to topics res', res)
         })
+
+        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', this.topics.publish.getStatus)
+        })
         
       })
+
       this.client.on('error', error => {
         console.log('Connection failed', error)
       })
@@ -234,10 +239,13 @@ export default {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
+        if (this.receiveNews.status === 'connected') {
+             this.background = 'success'
+        }else{
+          this.background = 'danger'
+        }
         console.log(this.receiveNews)
       })
   }
 }
 </script>
-
-

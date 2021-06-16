@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer"  class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
           
           <b-container >
             <b-row align-h="start">
@@ -12,8 +12,8 @@
               </b-col>
 
               <b-col cols="3">
-                <span class="text-center"> Sotano </span> |
-                <span class="text-center"> Tv1 </span>
+                <span class="text-center"> {{sala}} </span> |
+                <span class="text-center"> Tv{{tv}} </span>
               </b-col>
 
               <b-col cols="4">
@@ -62,34 +62,30 @@
                     </b-col>
                 </b-row>
 
-                <b-row align-h="center">
+                <!-- button for a url to change streaming -->
+                <!-- <b-row align-h="center">
                   <b-col cols="8">
-                      <b-form-input size="sm" class="mt-3" v-model="NuevoCanal" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
+                      <b-form-input size="sm" class="mt-3" v-model="newStreaming" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
                   </b-col>
                   <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" @click="doPublishUrlStreaming"> Cambiar Emision </b-button>
+                      <b-button size="sm" variant="success" class="mt-3" > Cambiar Emision </b-button>
                   </b-col>
+                </b-row> -->
+                <!-- button for a url to change streaming -->
 
-                </b-row>
                 <b-row class="mt-1" align-h="center">
                   
-                  <b-col cols="5">
-                    <b-button variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
+                  <b-col cols="4">
+                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col cols="4">
-                    <b-button variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
+                    <b-button size="sm" variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
                   </b-col>
-
                 </b-row>
                 </b-container>
-                
             </b-card>
           </b-collapse>
-    </b-list-group>
-      {{NuevoCanal}}
-    <b-button variant="danger" class="mt-3" > Obtener emision actual </b-button>
-
-                                           
+    </b-list-group>                        
   </b-container>
 </template>
 
@@ -98,12 +94,18 @@
 const mqtt = require('mqtt')
 
 export default {
+  props:[
+    'sala',
+    'tv',
+  ],
+
   data() {
     return {
       status:'',
       background:'danger',
       NuevoCanal:'',
       emision:'',
+      newStreaming:'',
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -125,20 +127,17 @@ export default {
           currentStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/currentStreaming',
         },
         publish:{
-          RestartPlayer:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
-          RestartDevice:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/config',
+          restart:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/restart',
           getStatus: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
           urlStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming',
-
         },
       },
 
-      
       payloads:{
         restartDevice:'{ "restart": "device" }',
         restartPlayer:'{ "restart": "player" }',
         getStatus: '{ "getstatus": "true" }',
-        urlStreaming:'{ "urlStreaming":"https://www.youtube.com/watch?v=pBeXhdvjRKc" }'
+        urlStreaming: `{ "urlStreaming":"rtsp://loquesea" }`,
       },
       
       qos: 0,
@@ -154,34 +153,36 @@ export default {
 
   methods: {
 
-    doPublishpublishRestartPlayer() {        
-        this.client.publish(this.topics.publish.RestartPlayer, this.payloads.restartPlayer, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.RestartPlayer)
-        })
-    },
-    
-    getStatusPlayer() {
+   getStatusPlayer() {
         this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
           console.log('Publish  to topics', this.topics.publish.getStatus)
+          
         })
     },
 
-    doPublishRestartDevice() {
-        this.client.publish(this.topics.publish.RestartDevice, this.payloads.restartDevice, this.qos, error => {
+    doPublishpublishRestartPlayer() {        
+        this.client.publish(this.topics.publish.restart, this.payloads.restartPlayer, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', this.topics.publish.RestartDevice)
+          console.log('Publish in the topic', this.topics.publish.restart)
+        })
+    },
+    
+    doPublishRestartDevice() {
+        this.client.publish(this.topics.publish.restart, this.payloads.restartDevice, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish  to topics', this.topics.publish.restart)
         })
     },
 
-    doPublishUrlStreaming() {
+    doPublishNewStreaming() {
+
         this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
@@ -240,6 +241,8 @@ export default {
         this.receiveNews = JSON.parse(message);
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
+        }else{
+          this.background = 'danger'
         }
         console.log(this.receiveNews)
       })
