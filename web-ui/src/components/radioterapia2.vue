@@ -1,10 +1,10 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-3 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-4 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
           
           <b-container >
-            <b-row align-h="start">
+            <b-row align-h="around">
 
               <b-col cols="2">
                 <b-icon style="margin-right: 15px" font-scale="1" icon="circle-fill" :variant="background"></b-icon>
@@ -20,10 +20,6 @@
                 <span class="text-center"> <b> Emision </b> </span> |
                 <span class="text-center"> {{receiveNews.emision}} </span>
               </b-col>
-
-              <b-col cols="3">
-                <span class="text-center"> Imbanaco TV  </span>
-              </b-col>
       
             </b-row>
 
@@ -32,7 +28,7 @@
 
         </b-list-group-item>
 
-          <b-collapse id="collapse-3" class="mb-3" >
+          <b-collapse id="collapse-4" class="mb-3" >
             <b-card>
                 <b-container>
                   <b-row >
@@ -116,20 +112,20 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerSotano',
+        clientId: 'webClientPlayerradioterapia2',
         username: 'emqx',
         password: 'public',
       },
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/status',
-          currentStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/currentStreaming',
+          status:'imbanaco/principal/players/radioterapia/tv2/59bc841e074e4509a312f0a11a549bed/status',
+          currentStreaming:'imbanaco/principal/players/radioterapia/tv2/59bc841e074e4509a312f0a11a549bed/currentStreaming',
         },
         publish:{
-          restart:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/restart',
-          getStatus: 'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
-          urlStreaming:'imbanaco/principal/players/sotano/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming',
+          restart:'imbanaco/principal/players/radioterapia/tv2/59bc841e074e4509a312f0a11a549bed/restart',
+          getStatus: 'imbanaco/principal/players/radioterapia/tv2/59bc841e074e4509a312f0a11a549bed/getstatus',
+          urlStreaming:'imbanaco/principal/players/radioterapia/tv2/59bc841e074e4509a312f0a11a549bed/urlStreaming',
         },
       },
 
@@ -137,7 +133,7 @@ export default {
         restartDevice:'{ "restart": "device" }',
         restartPlayer:'{ "restart": "player" }',
         getStatus: '{ "getstatus": "true" }',
-        urlStreaming: `{ "urlStreaming":"rtsp://loquesea" }`,
+        urlStreaming: `{ "urlStreaming":"rtsp://ip/name" }`,
       },
       
       qos: 0,
