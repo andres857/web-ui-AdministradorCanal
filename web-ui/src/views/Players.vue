@@ -12,12 +12,12 @@
     </b-row>
 
 
-    <b-row align-h="center">
+    <!-- <b-row align-h="center">
       <b-col cols="5" >
           <urgencias sala="Urgencias" tv="1"/>
       </b-col>
       
-    </b-row>
+    </b-row> -->
 
     <b-row  align-h="center">
       <b-col cols="5">
@@ -25,7 +25,7 @@
       </b-col>
     </b-row>
 
-    <b-row  align-h="center">
+    <!-- <b-row  align-h="center">
       <b-col cols="5">
           <esperaadultos sala="Espera Adultos" tv="1"/>
       </b-col>
@@ -53,7 +53,7 @@
       <b-col cols="5">
           <resonanciamagnetica sala="Resonancia Magnetica" tv="1"/>
       </b-col>
-    </b-row>
+    </b-row> -->
     
 
   </div>
@@ -63,17 +63,12 @@
 
 // import alternadora from '../components/alternadora.vue'
 import uci from '../components/uci.vue'
-import urgencias from '../components/urgencias.vue'
-import esperaadultos from '../components/esperaadultos.vue'
-import radioterapia from '../components/radioterapia.vue'
-import radioterapia2 from '../components/radioterapia2.vue'
-import medicinanuclear from '../components/medicinanuclear.vue'
-import resonanciamagnetica from '../components/resonanciamagnetica.vue'
-
-
-
-
-
+// import urgencias from '../components/urgencias.vue'
+// import esperaadultos from '../components/esperaadultos.vue'
+// import radioterapia from '../components/radioterapia.vue'
+// import radioterapia2 from '../components/radioterapia2.vue'
+// import medicinanuclear from '../components/medicinanuclear.vue'
+// import resonanciamagnetica from '../components/resonanciamagnetica.vue'
 
 
 
@@ -82,12 +77,12 @@ export default {
   components: {
     // alternadora,
     uci,    
-    urgencias,
-    esperaadultos,
-    radioterapia,
-    radioterapia2,
-    medicinanuclear,
-    resonanciamagnetica
+    // urgencias,
+    // esperaadultos,
+    // radioterapia,
+    // radioterapia2,
+    // medicinanuclear,
+    // resonanciamagnetica
   }
 }
 </script>

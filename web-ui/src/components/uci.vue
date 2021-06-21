@@ -1,8 +1,8 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-2 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
-          
+        <b-list-group-item v-b-toggle.collapse-2 class="d-flex justify-content-between align-items-center" >
+          <!--  @click="getStatusPlayer" -->
           <b-container >
             <b-row align-h="around">
 
@@ -72,10 +72,10 @@
                 <b-row class="mt-1" align-h="center">
                   
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
+                    <b-button size="sm" variant="danger" class="h4 mt-3"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
+                    <b-button size="sm" variant="danger" class="mt-3"> Reiniciar Player </b-button>
                   </b-col>
                 </b-row>
                 </b-container>
@@ -102,6 +102,7 @@ export default {
       NuevoCanal:'',
       emision:'',
       newStreaming:'',
+
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -119,21 +120,15 @@ export default {
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/uci/tv1/bc1832c6fd174df7aa5ed7f79275b2bc/status',
-          currentStreaming:'imbanaco/principal/players/uci/tv1/bc1832c6fd174df7aa5ed7f79275b2bc/currentStreaming',
+          status:'imbanaco/principal/players/sotano/tv1/4451b1/status',
         },
         publish:{
-          restart:'imbanaco/principal/players/uci/tv1/bc1832c6fd174df7aa5ed7f79275b2bc/restart',
-          getStatus: 'imbanaco/principal/players/uci/tv1/bc1832c6fd174df7aa5ed7f79275b2bc/getstatus',
-          urlStreaming:'imbanaco/principal/players/uci/tv1/bc1832c6fd174df7aa5ed7f79275b2bc/urlStreaming',
+          request: 'imbanaco/principal/players/sotano/tv1/4451b1/request',
         },
       },
 
       payloads:{
-        restartDevice:'{ "restart": "device" }',
-        restartPlayer:'{ "restart": "player" }',
-        getStatus: '{ "getstatus": "true" }',
-        urlStreaming: `{ "urlStreaming":"rtsp://ip/name" }`,
+        request: '{ "status": "player" }',
       },
       
       qos: 0,
@@ -150,42 +145,16 @@ export default {
   methods: {
 
    getStatusPlayer() {
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+        this.client.publish(this.topics.publish.request, this.payloads.request, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
+          console.log('Publish  to topics', this.topics.publish.request)
           
         })
     },
+// ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;99999999999999999999999999999
 
-    doPublishpublishRestartPlayer() {        
-        this.client.publish(this.topics.publish.restart, this.payloads.restartPlayer, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.restart)
-        })
-    },
-    
-    doPublishRestartDevice() {
-        this.client.publish(this.topics.publish.restart, this.payloads.restartDevice, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.restart)
-        })
-    },
-
-    doPublishNewStreaming() {
-
-        this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.urlStreaming)
-        })
-    },
   },
 
   mounted:function(){
@@ -210,19 +179,12 @@ export default {
         console.log('Subscribe to topics res', res)
         }),
 
-        this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
-            if (error) {
-                console.log('Subscribe to topics error', error)
-                return
-            }
-        console.log('Subscribe to topics res', res)
-        })
 
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+        this.client.publish(this.topics.publish.request, this.payloads.request, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
+          console.log('Publish  to topics |||||||||||||', this.topics.publish.request)
         })
         
       })
@@ -235,12 +197,13 @@ export default {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
+        console.log(this.receiveNews)
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
+             this.client.end()
         }else{
           this.background = 'danger'
         }
-        console.log(this.receiveNews)
       })
   }
 }

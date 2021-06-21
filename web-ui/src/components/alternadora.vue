@@ -65,20 +65,20 @@
     <b-row align-h="around" style="text-align:center">   
 
       <b-col cols='3' class="p-2" >
-          <b-img width="250" height="150" :src="imbanaco" @click="doChangeChannelImbanaco"></b-img>
+          <b-img width="250" height="150" :src="imbanaco" style="cursor: pointer" @click="doChangeChannelImbanaco"></b-img>
       </b-col>  
 
       <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="rcn" @click="doChangeChannelRcn"></b-img>
+        <b-img width="150" height="150" :src="rcn" style="cursor: pointer" @click="doChangeChannelRcn"></b-img>
 
       </b-col>
 
       <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="colombia" @click="doChangeChannelColombia"></b-img>
+        <b-img width="150" height="150" :src="colombia" style="cursor: pointer" @click="doChangeChannelColombia"></b-img>
       </b-col>
 
       <b-col cols='2' class="p-3"  >
-        <b-img width="120" height="120" :src="caracol" @click="doChangeChannelCaracol"></b-img>
+        <b-img width="120" height="120" :src="caracol" style="cursor: pointer" @click="doChangeChannelCaracol"></b-img>
       </b-col>
 
     </b-row>    
