@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-2 class="d-flex justify-content-between align-items-center" >
+        <b-list-group-item v-b-toggle.collapse-2 class="d-flex justify-content-between align-items-center" @click="getStatusPlayer" >
           <!--  @click="getStatusPlayer" -->
           <b-container >
             <b-row align-h="around">
@@ -72,10 +72,10 @@
                 <b-row class="mt-1" align-h="center">
                   
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="h4 mt-3"> Reiniciar Reproductor </b-button>
+                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="restartPlayer"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="mt-3"> Reiniciar Player </b-button>
+                    <b-button size="sm" variant="danger" class="mt-3" @click="restartPlayer"> Reiniciar Player </b-button>
                   </b-col>
                 </b-row>
                 </b-container>
@@ -87,7 +87,7 @@
 
 
 <script>
-const mqtt = require('mqtt')
+const mqtt = require('async-mqtt')
 
 export default {
   props:[
@@ -99,9 +99,6 @@ export default {
     return {
       status:'',
       background:'danger',
-      NuevoCanal:'',
-      emision:'',
-      newStreaming:'',
 
       connection: {
         host: 'broker.windowschannel.us',
@@ -129,6 +126,7 @@ export default {
 
       payloads:{
         request: '{ "status": "player" }',
+        restart: '{ "restart": "player" }',
       },
       
       qos: 0,
@@ -144,67 +142,60 @@ export default {
 
   methods: {
 
-   getStatusPlayer() {
-        this.client.publish(this.topics.publish.request, this.payloads.request, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.request)
-          
-        })
-    },
-// ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;99999999999999999999999999999
+   async getStatusPlayer() {
 
-  },
+        const { host, port, endpoint} = this.connection
+        const connectUrl = `ws://${host}:${port}${endpoint}`
 
-  mounted:function(){
-      
-      const { host, port, endpoint} = this.connection
-      const connectUrl = `ws://${host}:${port}${endpoint}`
+        try {
+          this.client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+          console.log(`[ Client - Connected Successfull ]`);
+        } catch (error) {
+          console.log(`[ Client - Dont connected ] ${error}`)
+        }
 
-      try {
-        this.client = mqtt.connect(connectUrl,this.options)
-           } catch (error) {
-        console.log('mqtt.connect error', error)
-       }
+        await this.client.subscribe(this.topics.subscriber.status, { qos:2 });
 
-      this.client.on('connect', () => {
-        console.log('Connection success!')
+        console.log(`suscriber success to ${this.topics.subscriber.status} `);
 
-        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
-            if (error) {
-                console.log('Subscribe to topics error', error)
-                return
-            }
-        console.log('Subscribe to topics res', res)
-        }),
-
-
-        this.client.publish(this.topics.publish.request, this.payloads.request, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics |||||||||||||', this.topics.publish.request)
-        })
-        
-      })
-
-      this.client.on('error', error => {
-        console.log('Connection failed', error)
-      })
-
-      this.client.on('message', (topic, message) => {
-        // this.receiveNews = this.receiveNews.concat(message)
+        this.client.on('message', (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
-        console.log(this.receiveNews)
+        
+
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
              this.client.end()
+             console.log(`Cerrando Conexion al broker`);
         }else{
           this.background = 'danger'
         }
       })
-  }
+
+    },
+
+    async restartPlayer() {
+
+        const { host, port, endpoint} = this.connection
+        const connectUrl = `ws://${host}:${port}${endpoint}`
+
+        try {
+          this.client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+          console.log(`[ Client - Connected Successfull ]`);
+        } catch (error) {
+          console.log(`[ Client - Dont connected ] ${error}`)
+        }
+
+        try {
+          await this.client.publish(this.topics.publish.request,this.payloads.restart);
+          console.log(`publicando`);
+          
+        } catch (error) {
+          console.log(`Error al publicar`);
+        }
+    }
+  },
 }
+
+
 </script>
