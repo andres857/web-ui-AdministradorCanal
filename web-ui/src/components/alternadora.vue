@@ -11,17 +11,13 @@
                 <b-icon icon="display"></b-icon>
               </b-col>
 
-              <b-col cols="3">
-                <span class="text-center"> {{sala}} </span> 
+              <b-col cols="5">
+                <span class="text-center"> Administrador de Canales </span> 
               </b-col>
 
-              <b-col cols="4">
-                <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.emision}} </span>
-              </b-col>
-
-              <b-col cols="3">
-                <span class="text-center"> Imbanaco TV  </span>
+              <b-col cols="5">
+                <span class="text-center"> <b> Canal actual </b> </span> |
+                <span class="text-center"> {{receiveNews.currentStreaming}} </span>
               </b-col>
       
             </b-row>
@@ -62,26 +58,33 @@
             </b-card>
           </b-collapse>
     </b-list-group>       
+
     <b-row align-h="around" style="text-align:center">   
 
       <b-col cols='3' class="p-2" >
-          <b-img width="250" height="150" :src="imbanaco" style="cursor: pointer" @click="doChangeChannelImbanaco"></b-img>
+          <b-img width="250" height="150" :src="imbanaco" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
       </b-col>  
 
       <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="rcn" style="cursor: pointer" @click="doChangeChannelRcn"></b-img>
+        <b-img width="150" height="150" :src="rcn" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
 
       </b-col>
 
+    </b-row>   
+
+    <b-row align-h="around" style="text-align:center">   
+
       <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="colombia" style="cursor: pointer" @click="doChangeChannelColombia"></b-img>
+        <b-img width="150" height="150" :src="colombia" style="cursor: pointer" @click="dochangeStreaming(channels.scolombia)" ></b-img>
       </b-col>
 
       <b-col cols='2' class="p-3"  >
-        <b-img width="120" height="120" :src="caracol" style="cursor: pointer" @click="doChangeChannelCaracol"></b-img>
+        <b-img width="120" height="120" :src="caracol" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
       </b-col>
 
-    </b-row>    
+    </b-row> 
+
+
 
   </b-container>
 </template>
@@ -101,11 +104,9 @@ export default {
       colombia: require('../assets/Colombia.svg'),
       rcn: require('../assets/rcn.svg'),
       imbanaco: require('../assets/imbanaco.svg'),
+
       status:'',
       background:'danger',
-      NuevoCanal:'',
-      emision:'',
-      newStreaming:'',
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -123,92 +124,45 @@ export default {
 
       topics: {
         subscriber:{
-          currentStreaming:'imbanaco/principal/alternadora/rjhgejhge/currentStreaming',
-          status:'imbanaco/principal/alternadora/rjhgejhge/status',
+          currentStreaming:'imbanaco/principal/currentStreaming',
+          status:'imbanaco/principal/alternadora/b5c890/status',
         },
         publish:{
-          getChannel:'imbanaco/principal/alternadora/rjhgejhge/getChannel',
-          getStatus:'imbanaco/principal/alternadora/rjhgejhge/getStatus',
-          channel:'imbanaco/principal/alternadora/rjhgejhge/channel'
+          getStatus:'imbanaco/principal/alternadora/b5c890/getStatus',
+          request: `imbanaco/principal/players/sotano/tv1/4451b1/request`,
+          channel: `imbanaco/principal/players/channel`
         },
       },
 
-      payloads:{
-        getChannel: '{ "getChannel": "true" }',
-        getStatus:'{ "status": "get" }',
-        changeStreamingToInstitucional: '{ "changeStreaming": "Institucional" }',
 
-        changeChangeCaracol: '{ "channel": "caracol" }',
-        changeChangeColombia: '{ "channel": "colombia" }',
-        changeChangercn: '{ "channel": "rcn" }',
-        changeChangeImbanaco: '{ "channel": "imbanaco" }',
+      channels:{
+        wchannel: '{"channel":"imbanacotv"}',
+        caracol: '{"channel":"caracol"}',
+        rcn : '{"channel":"rcn"}',
+        scolombia: '{"channel":"scolombia"}',
+      },
+
+      payloads:{
+        getStatus:'{ "status": "get" }',
+        wchannel: '{ "channel": "wchannel" }',
+        comercial: '{ "channel": "comercial" }',
       },
       
       qos: 0,
 
       receiveNews: '',
-      qosList: [
-        { label: 0, value: 0 },
-        { label: 1, value: 1 },
-        { label: 2, value: 2 },
-      ],
+      
     }
   },
 
   methods: {
 
-    doChangeChannelCaracol(){
-        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeCaracol, this.qos, error => {
+      dochangeStreaming(channel){
+        this.client.publish(this.topics.publish.channel, channel, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
           console.log('Publish in the topic', this.topics.publish.channel)
-        })
-      },
-
-      doChangeChannelColombia(){
-        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeColombia, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.channel)
-        })
-      },
-
-      doChangeChannelRcn(){
-        this.client.publish(this.topics.publish.channel, this.payloads.changeChangercn, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.channel)
-        })
-      },
-
-      doChangeChannelImbanaco(){
-        this.client.publish(this.topics.publish.channel, this.payloads.changeChangeImbanaco, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.channel)
-        })
-      },
-
-      
-      dogetcurrentStreaming(){
-        this.client.publish(this.topics.publish.getChannel, this.payloads.getChannel, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.getChannel)
-        })
-      },
-
-      dochangeStreaming(){
-        this.client.publish(this.topics.publish.changeStreaming, this.payloads.changeStreaming, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.changeStreaming)
         })
       },
    
@@ -230,6 +184,14 @@ export default {
 
 
         this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
+            if (error) {
+                console.log('Subscribe to topics error', error)
+                return
+            }
+        console.log('Subscribe to topics res', res)
+        })
+
+        this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
             if (error) {
                 console.log('Subscribe to topics error', error)
                 return

@@ -66,8 +66,8 @@
                   <b-col cols="4" style="margin-left: -25px">
                       <b-button size="sm" variant="success" class="mt-3" > Cambiar Emision </b-button>
                   </b-col>
-                </b-row> -->
-                <!-- button for a url to change streaming -->
+                </b-row> --> 
+                <!--  button for a url to change streaming -->
 
                 <b-row class="mt-1" align-h="center">
                   
@@ -99,7 +99,6 @@ export default {
     return {
       status:'',
       background:'danger',
-
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -129,43 +128,46 @@ export default {
         restart: '{ "restart": "player" }',
       },
       
-      qos: 0,
+      // qos: 0,
 
       receiveNews: '',
-      qosList: [
-        { label: 0, value: 0 },
-        { label: 1, value: 1 },
-        { label: 2, value: 2 },
-      ],
+      // qosList: [
+      //   { label: 0, value: 0 },
+      //   { label: 1, value: 1 },
+      //   { label: 2, value: 2 },
+      // ],
     }
   },
 
   methods: {
-
-   async getStatusPlayer() {
-
-        const { host, port, endpoint} = this.connection
+   
+   async conectar(){
+       const { host, port, endpoint} = this.connection
         const connectUrl = `ws://${host}:${port}${endpoint}`
-
+        let client = null
         try {
-          this.client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+          client = await mqtt.connectAsync(`${connectUrl}`,this.options)
           console.log(`[ Client - Connected Successfull ]`);
         } catch (error) {
           console.log(`[ Client - Dont connected ] ${error}`)
         }
+        return client
+   },
 
-        await this.client.subscribe(this.topics.subscriber.status, { qos:2 });
+   async getStatusPlayer() {
+        let client = await this.conectar()
+        await client.subscribe(this.topics.subscriber.status, { qos:2 });
 
         console.log(`suscriber success to ${this.topics.subscriber.status} `);
 
-        this.client.on('message', (topic, message) => {
+        client.on('message', async (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
         
 
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
-             this.client.end()
+             await client.end()
              console.log(`Cerrando Conexion al broker`);
         }else{
           this.background = 'danger'
@@ -176,18 +178,10 @@ export default {
 
     async restartPlayer() {
 
-        const { host, port, endpoint} = this.connection
-        const connectUrl = `ws://${host}:${port}${endpoint}`
+        let client = await this.conectar()
 
         try {
-          this.client = await mqtt.connectAsync(`${connectUrl}`,this.options)
-          console.log(`[ Client - Connected Successfull ]`);
-        } catch (error) {
-          console.log(`[ Client - Dont connected ] ${error}`)
-        }
-
-        try {
-          await this.client.publish(this.topics.publish.request,this.payloads.restart);
+          await client.publish(this.topics.publish.request, this.payloads.restart);
           console.log(`publicando`);
           
         } catch (error) {

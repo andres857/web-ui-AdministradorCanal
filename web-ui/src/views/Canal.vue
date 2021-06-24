@@ -1,35 +1,35 @@
 <template>
   <b-container>
-    <b-row class="mb-5 mt-2">
+    <b-row   class="mb-5 mt-2">
       <b-col>
         <h1>Administrador de canales</h1>
       </b-col>
     </b-row>
     <!-- Reproductor y info -->
-    <b-row>
-      <b-col>
+    <b-row align-h="around">
+      <b-col cols="7">
         <alternadora sala="Alternadora" tv=""/>
       </b-col>
     </b-row>
-    <b-row align-h="center" >
+    <!-- <b-row align-h="center" >
       <b-col cols="8">
         <videoplayer :options="videoOptions"/>
       </b-col>
-    </b-row>
+    </b-row> -->
     
   </b-container>
 </template>
 
 
 <script>
-import videoplayer from '../components/videoplayer.vue'
+// import videoplayer from '../components/videoplayer.vue'
 import alternadora from '../components/alternadora.vue'
 import 'video.js/dist/video-js.css'
 
 export default {
   components: {
     alternadora,
-    videoplayer,
+    // videoplayer,
   },
   data(){
     return{
