@@ -83,7 +83,13 @@
       </b-col>
 
     </b-row> 
+      <b-col cols="8">
+        <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Todos los Player </b-button>
+        <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Todos los Dispositivos </b-button>
+      </b-col>
+    <b-row>
 
+    </b-row>
 
 
   </b-container>
@@ -128,12 +134,11 @@ export default {
           status:'imbanaco/principal/alternadora/b5c890/status',
         },
         publish:{
-          getStatus:'imbanaco/principal/alternadora/b5c890/getStatus',
-          request: `imbanaco/principal/players/sotano/tv1/4451b1/request`,
-          channel: `imbanaco/principal/players/channel`
+          request: `imbanaco/principal/alternadora/b5c890/request`,
+          channel: `imbanaco/principal/players/channel`,
+          restart: `imbanaco/principal/players/restart`
         },
       },
-
 
       channels:{
         wchannel: '{"channel":"imbanacotv"}',
@@ -144,8 +149,8 @@ export default {
 
       payloads:{
         getStatus:'{ "status": "get" }',
-        wchannel: '{ "channel": "wchannel" }',
-        comercial: '{ "channel": "comercial" }',
+        restartAllPlayers: '{ "restart": "player" }',
+        restartAllDevices: '{ "restart": "device" }',
       },
       
       qos: 0,
@@ -165,8 +170,19 @@ export default {
           console.log('Publish in the topic', this.topics.publish.channel)
         })
       },
+
+      doRestartAll(target){
+        this.client.publish(this.topics.publish.restart, target, this.qos, error => {
+          if (error) {
+            console.log('Publish error', error)
+          }
+          console.log('Publish in the topic', this.topics.publish.restart)
+        })
+      },
    
   },
+
+
 
   mounted:function(){
       
@@ -181,7 +197,6 @@ export default {
 
       this.client.on('connect', () => {
         console.log('Connection success!')
-
 
         this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
             if (error) {
@@ -199,11 +214,11 @@ export default {
         console.log('Subscribe to topics res', res)
         })
 
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
+        this.client.publish(this.topics.publish.request, this.payloads.getStatus, this.qos, error => {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
+          console.log('Publish  to topics', this.topics.publish.request)
         })
         
       })
