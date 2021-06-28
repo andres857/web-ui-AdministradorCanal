@@ -116,10 +116,11 @@ export default {
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/sotano/tv1/4451b1/status',
+          status:'imbanaco/principal/players/UCI/tv1/bc1832/status',
+          response: 'imbanaco/principal/players/UCI/tv1/bc1832/response',
         },
         publish:{
-          request: 'imbanaco/principal/players/sotano/tv1/4451b1/request',
+          request: 'imbanaco/principal/players/UCI/tv1/bc1832/request',
         },
       },
 
@@ -128,14 +129,8 @@ export default {
         restart: '{ "restart": "player" }',
       },
       
-      // qos: 0,
-
       receiveNews: '',
-      // qosList: [
-      //   { label: 0, value: 0 },
-      //   { label: 1, value: 1 },
-      //   { label: 2, value: 2 },
-      // ],
+
     }
   },
 
@@ -164,7 +159,6 @@ export default {
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
         
-
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
              await client.end()
