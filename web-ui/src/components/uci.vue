@@ -18,7 +18,7 @@
 
               <b-col cols="4">
                 <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.emision}} </span>
+                <span class="text-center"> {{receiveNews.channel}} </span>
               </b-col>
       
             </b-row>
@@ -72,12 +72,13 @@
                 <b-row class="mt-1" align-h="center">
                   
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="restartPlayer"> Reiniciar Reproductor </b-button>
+                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doRestart(payloads.restartPlayer)"> Reiniciar Reproductor </b-button>
                   </b-col>
                   <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="mt-3" @click="restartPlayer"> Reiniciar Player </b-button>
+                    <b-button size="sm" variant="danger" class="mt-3" @click="doRestart(payloads.restartDevice)"> Reiniciar Player </b-button>
                   </b-col>
                 </b-row>
+                {{receiveNews}}
                 </b-container>
             </b-card>
           </b-collapse>
@@ -97,7 +98,8 @@ export default {
 
   data() {
     return {
-      status:'',
+      statusPayer: false,
+      channel:'',
       background:'danger',
       connection: {
         host: 'broker.windowschannel.us',
@@ -109,7 +111,7 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerUCI',
+        clientId: 'webClientPlayersotano',
         username: 'emqx',
         password: 'public',
       },
@@ -117,25 +119,22 @@ export default {
       topics: {
         subscriber:{
           status:'imbanaco/principal/players/sotano/tv1/4451b1/status',
+          response: 'imbanaco/principal/players/sotano/tv1/4451b1/response',
+          currentStreaming: 'imbanaco/principal/players/sotano/tv1/4451b1/streaming'
         },
         publish:{
           request: 'imbanaco/principal/players/sotano/tv1/4451b1/request',
+          restart: 'imbanaco/principal/players/restart',
         },
       },
 
       payloads:{
-        request: '{ "status": "player" }',
-        restart: '{ "restart": "player" }',
-      },
+        status: '{ "status": "device" }',
+        restartPlayer: '{ "restart": "player" }',
+        restartDevice: '{ "restart": "device" }',
+       },
       
-      // qos: 0,
-
       receiveNews: '',
-      // qosList: [
-      //   { label: 0, value: 0 },
-      //   { label: 1, value: 1 },
-      //   { label: 2, value: 2 },
-      // ],
     }
   },
 
@@ -148,6 +147,7 @@ export default {
         try {
           client = await mqtt.connectAsync(`${connectUrl}`,this.options)
           console.log(`[ Client - Connected Successfull ]`);
+
         } catch (error) {
           console.log(`[ Client - Dont connected ] ${error}`)
         }
@@ -156,7 +156,11 @@ export default {
 
    async getStatusPlayer() {
         let client = await this.conectar()
+        
         await client.subscribe(this.topics.subscriber.status, { qos:2 });
+        await client.subscribe(this.topics.subscriber.currentStreaming, { qos:2 });
+
+        await client.publish(this.topics.publish.request, this.payloads.status, {qos:0});
 
         console.log(`suscriber success to ${this.topics.subscriber.status} `);
 
@@ -164,24 +168,28 @@ export default {
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = JSON.parse(message);
         
+        if( topic == this.topics.subscriber.currentStreaming ){
+          this.channel = this.receiveNews.channel
+          
+        } else if (topic == this.topics.subscriber.status ) {
 
-        if (this.receiveNews.status === 'connected') {
+          if(this.receiveNews.status === 'connected'){
              this.background = 'success'
-             await client.end()
-             console.log(`Cerrando Conexion al broker`);
-        }else{
-          this.background = 'danger'
+          }else
+           this.background = 'danger'
+          console.log(`Cerrando Conexion al broker`);
         }
+        await client.end()
       })
 
     },
 
-    async restartPlayer() {
+    async doRestart(target) {
 
         let client = await this.conectar()
 
         try {
-          await client.publish(this.topics.publish.request, this.payloads.restart);
+          await client.publish(this.topics.publish.request, target, {qos:0});
           console.log(`publicando`);
           
         } catch (error) {
@@ -189,6 +197,10 @@ export default {
         }
     }
   },
+
+  mounted:function () {
+    this.getStatusPlayer()
+  }
 }
 
 

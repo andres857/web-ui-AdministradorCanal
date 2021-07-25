@@ -75,7 +75,7 @@
     <b-row align-h="around" style="text-align:center">   
 
       <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="colombia" style="cursor: pointer" @click="dochangeStreaming(channels.scolombia)" ></b-img>
+        <b-img width="100" height="100" :src="tnt" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
       </b-col>
 
       <b-col cols='2' class="p-3"  >
@@ -87,9 +87,17 @@
         <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Todos los Player </b-button>
         <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Todos los Dispositivos </b-button>
       </b-col>
-    <b-row>
 
+    <b-row>
+      <b-button class="mt-2 pl-3" pill :variant=backgroundChannelwc >Imbanaco tv 
+            <b-icon class="ml-1" icon="circle-fill" :animation=animationChannelwc font-scale="1.1"></b-icon>
+      </b-button>
+
+      <b-button disabled  class="mt-2 pl-3" pill variant="danger">Caracol
+            <b-icon class="ml-1 " icon="circle-fill"  font-scale="1.1"></b-icon>
+      </b-button>
     </b-row>
+
 
 
   </b-container>
@@ -107,9 +115,13 @@ export default {
   data() {
     return {
       caracol: require('../assets/Caracol.svg'),
-      colombia: require('../assets/Colombia.svg'),
+      tnt: require('../assets/tnt.svg'),
       rcn: require('../assets/rcn.svg'),
       imbanaco: require('../assets/imbanaco.svg'),
+
+        backgroundChannelwc:'success',
+        animationChannelwc:'throb',
+      
 
       status:'',
       background:'danger',
@@ -144,7 +156,7 @@ export default {
         wchannel: '{"channel":"imbanacotv"}',
         caracol: '{"channel":"caracol"}',
         rcn : '{"channel":"rcn"}',
-        scolombia: '{"channel":"scolombia"}',
+        tnt: '{"channel":"scolombia"}',
       },
 
       payloads:{
@@ -153,7 +165,7 @@ export default {
         restartAllDevices: '{ "restart": "device" }',
       },
       
-      qos: 0,
+      qos: 2,
 
       receiveNews: '',
       
@@ -167,7 +179,7 @@ export default {
           if (error) {
             console.log('Publish error', error)
           }
-          console.log('Publish in the topic', this.topics.publish.channel)
+          console.log('Publish in the topic', this.topics.publish.channel,channel)
         })
       },
 
@@ -219,6 +231,7 @@ export default {
             console.log('Publish error', error)
           }
           console.log('Publish  to topics', this.topics.publish.request)
+ 
         })
         
       })
