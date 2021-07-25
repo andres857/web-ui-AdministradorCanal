@@ -135,6 +135,7 @@ export default {
        },
       
       receiveNews: '',
+
     }
   },
 
