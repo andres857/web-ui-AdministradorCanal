@@ -1,96 +1,92 @@
 <template>
   <b-container>
-    <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-2 class="d-flex justify-content-between align-items-center" @click="getStatusPlayer" >
-          <!--  @click="getStatusPlayer" -->
-          <b-container >
-            <b-row align-h="around">
+    <b-row align-h="center">
+      <b-col cols="4">
+        <b-alert 
+          :show="dismissCountDown"
+          dismissible
+          variant="success"
+          @dismissed="dismissCountDown=0"
+          @dismiss-count-down="countDownChanged"
+        >
+        <p > <b-icon variant="outline-success" icon="check-circle"></b-icon> Reinicio Exitoso! </p>
+        </b-alert>
+      </b-col>
+    </b-row>
+
+    <b-row>
+      <b-col>
+        <b-list-group>
+          <b-list-group-item>
+            <b-row align-h="center">
 
               <b-col cols="2">
                 <b-icon style="margin-right: 15px" font-scale="1" icon="circle-fill" :variant="background"></b-icon>
-                <b-icon icon="display"></b-icon>
+                <b-icon variant="outline-success" icon="display"></b-icon>
               </b-col>
-
-              <b-col cols="3">
-                <span class="text-center"> {{sala}} </span> |
-                <span class="text-center"> Tv{{tv}} </span>
+              <b-col cols= "4" >
+                 {{sala}} | Tv{{tv}}
               </b-col>
-
-              <b-col cols="4">
-                <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.channel}} </span>
+              
+              <b-col cols= "4">
+                <b>Emision:</b> {{receiveNews.channel}}
               </b-col>
-      
-            </b-row>
-
-          </b-container>
-            
-
-        </b-list-group-item>
-
-          <b-collapse id="collapse-2" class="mb-3" >
-            <b-card>
-                <b-container>
-                  <b-row >
-
-                    <b-col cols="6" >
+              <b-col cols="2">
+                <div>
+                  <b-icon style="margin-right: 15px; fill: #00B2A9;
+                   margin-right: 6px; " font-scale="2" icon="card-checklist"  @click="showModal"></b-icon>
+                   
+                  <b-button v-b-tooltip.hover title="Reiniciar Aplicativo" class="mr-2" size="sm" variant="danger" @click="doRestart(payloads.restartPlayer)" >  <b-icon icon="collection-play"></b-icon> </b-button>
+                  <b-button v-b-tooltip.hover title="Reiniciar Reproductor" size="sm" variant="danger"  @click="doRestart(payloads.restartDevice)">  <b-icon icon="cast"></b-icon>  </b-button>                              
                         
-                        <div class="mt-1">
-                          <span><strong>IPv4</strong></span>
-                          <span> {{receiveNews.ip4}}</span>
+                    <b-modal ref="my-modal" hide-footer v-b-modal.modal-sm title="Reproductor Multimedia">
+                      <div>
+                        <p>
+                          <b>Id Reproductor</b>: 050345245
                           <br>
-                          <span><strong>MAC</strong></span>
-                          <span> {{receiveNews.MAC}}</span> 
+                          <b>Estado</b>
+                        </p>
+
+                        <div style="margin-left:10px; margin-top:-15px">
+                            {{receiveNews.main}}°C <b-icon icon="thermometer" font-scale="1.5"></b-icon> <br>    
+                            <span>{{receiveNews.currentLoad}} % </span>
+                            <b-icon icon="cpu" font-scale="1.5"></b-icon><br>
                         </div>
-                                                
-                    </b-col>
-
-                    <b-col cols="6">
-                        <b-col>
-                            <b-icon icon="thermometer" font-scale="1.5"></b-icon>
-                            {{receiveNews.main}} °C 
                             
-                        </b-col>
-                        <b-col class="mt-2">
-                            <b-icon icon="cpu" font-scale="1.5"></b-icon>
-                            <span> {{receiveNews.currentLoad}}%  </span>
-                        </b-col>
-                    </b-col>
-                </b-row>
-
-                <!-- button for a url to change streaming -->
-                <!-- <b-row align-h="center">
-                  <b-col cols="8">
-                      <b-form-input size="sm" class="mt-3" v-model="newStreaming" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
-                  </b-col>
-                  <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" > Cambiar Emision </b-button>
-                  </b-col>
-                </b-row> --> 
-                <!--  button for a url to change streaming -->
-
-                <b-row class="mt-1" align-h="center">
-                  
-                  <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doRestart(payloads.restartPlayer)"> Reiniciar Reproductor </b-button>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="mt-3" @click="doRestart(payloads.restartDevice)"> Reiniciar Player </b-button>
-                  </b-col>
-                </b-row>
-                {{receiveNews}}
-                </b-container>
-            </b-card>
-          </b-collapse>
-    </b-list-group>                        
+                        <p>
+                          <b>Canal</b>: Imbanaco TV <br>
+                          <b>Ubicacion</b>: {{sala}} | Tv{{tv}}<br> 
+                          <b>Network:</b> <br>
+                          <b style="margin-left:10px">IP</b>: {{receiveNews.ip4}}<br>
+                          <b style="margin-left:10px">MAC</b>: {{receiveNews.MAC}}<br>
+                          <b>Visto ultima vez</b>: July 30th 2021, 8:29:35 pm
+                        </p>
+                      </div>
+                      <div>
+                        <b-button class="mt-3" variant="outline-danger"  @click="hideModal">Cerrar</b-button>
+                      </div>
+                      
+                    </b-modal>
+                </div>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+        </b-list-group>
+      </b-col>
+    </b-row>    
+    
   </b-container>
 </template>
 
 
 <script>
+
 const mqtt = require('async-mqtt')
+let $body = document.querySelector("body");
+$body.style.backgroundColor = "#F4F8F8";
 
 export default {
+  
   props:[
     'sala',
     'tv',
@@ -98,6 +94,9 @@ export default {
 
   data() {
     return {
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      client: '',
       statusPayer: false,
       channel:'',
       background:'danger',
@@ -118,12 +117,12 @@ export default {
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/sotano/tv1/4451b1/status',
-          response: 'imbanaco/principal/players/sotano/tv1/4451b1/response',
-          currentStreaming: 'imbanaco/principal/players/sotano/tv1/4451b1/streaming'
+          status:'imbanaco/principal/players/pruebas/tv1/4451b1/status',
+          response: 'imbanaco/principal/players/pruebas/tv1/4451b1/response',
+          currentStreaming: 'imbanaco/principal/players/pruebas/tv1/4451b1/streaming'
         },
         publish:{
-          request: 'imbanaco/principal/players/sotano/tv1/4451b1/request',
+          request: 'imbanaco/principal/players/pruebas/tv1/4451b1/request',
           restart: 'imbanaco/principal/players/restart',
         },
       },
@@ -140,18 +139,34 @@ export default {
   },
 
   methods: {
-   
-   async conectar(){
-       const { host, port, endpoint} = this.connection
-        const connectUrl = `ws://${host}:${port}${endpoint}`
-        let client = null
-        try {
-          client = await mqtt.connectAsync(`${connectUrl}`,this.options)
-          console.log(`[ Client - Connected Successfull ]`);
+  showModal() {
+    this.$refs['my-modal'].show()
+  },
+  hideModal() {
+    this.$refs['my-modal'].hide()
+  },
 
-        } catch (error) {
-          console.log(`[ Client - Dont connected ] ${error}`)
-        }
+  countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+  },
+
+  showAlert() {
+    this.dismissCountDown = this.dismissSecs
+  },
+      
+   async conectar(){
+        // if (this.client) return this.client     
+          const { host, port, endpoint} = this.connection
+          const connectUrl = `ws://${host}:${port}${endpoint}`
+          let client = null
+            try {
+              client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+              console.log(`[ Client - Connected Successfull ]`);
+
+            } catch (error) {
+              console.log(`[ Client - Dont connected ] ${error}`)
+            }
+          // this.client = client
         return client
    },
 
@@ -167,7 +182,7 @@ export default {
 
         client.on('message', async (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
-        this.receiveNews = JSON.parse(message);
+        this.receiveNews = { ...this.receiveNews , ...JSON.parse(message)};
         
         if( topic == this.topics.subscriber.currentStreaming ){
           this.channel = this.receiveNews.channel
@@ -178,9 +193,9 @@ export default {
              this.background = 'success'
           }else
            this.background = 'danger'
+          await client.end()
           console.log(`Cerrando Conexion al broker`);
         }
-        await client.end()
       })
 
     },
@@ -192,6 +207,7 @@ export default {
         try {
           await client.publish(this.topics.publish.request, target, {qos:0});
           console.log(`publicando`);
+          this.showAlert()
           
         } catch (error) {
           console.log(`Error al publicar`);
@@ -204,5 +220,15 @@ export default {
   }
 }
 
-
 </script>
+
+<style scoped>
+*{
+  font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+}
+
+.MD_cont_adminPlayer svg {
+  margin-right: 6px;
+  fill: #00B2A9;
+}
+</style>

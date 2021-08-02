@@ -1,62 +1,20 @@
 <template>
-  <div class="mt-3">
-    <b-row align-h="center" class="mb-5">
-        <b-col cols="4">
-             <b-navbar type="light" variant="light">
-              <b-nav-form>
-                <b-form-input class="mr-sm-2" placeholder="Buscar"></b-form-input>
-                <b-button variant="outline-success" class="my-2 my-sm-0" type="submit">Search</b-button>
-              </b-nav-form>
-            </b-navbar>
-        </b-col>
-    </b-row>
+  <b-container>
 
-
-    <!-- <b-row align-h="center">
-      <b-col cols="5" >
-          <urgencias sala="Urgencias" tv="1"/>
-      </b-col>
-      
-    </b-row> -->
-
-    <b-row  align-h="center">
-      <b-col cols="5">
-          <uci sala="UCI" tv="1"/>
-      </b-col>
-    </b-row>
-
-    <!-- <b-row  align-h="center">
-      <b-col cols="5">
-          <esperaadultos sala="Espera Adultos" tv="1"/>
+    <b-row class="mb-5 mt-5 MD_contAllTT_players">
+      <div class="TT_indentificador_players"></div>
+      <b-col cols="8" class="MD_contTT_players">
+        <h2>Reproductores de video</h2>
       </b-col>
     </b-row>
 
     <b-row  align-h="center">
-      <b-col cols="5">
-          <radioterapia sala="Radioterapia" tv="1"/>
+      <b-col cols="12">
+          <uci sala="Resonancia Magnetica" tv="1"/>
       </b-col>
     </b-row>
 
-    <b-row  align-h="center">
-      <b-col cols="5">
-          <radioterapia2 sala="Radioterapia" tv="2"/>
-      </b-col>
-    </b-row>
-
-    <b-row  align-h="center">
-      <b-col cols="5">
-          <medicinanuclear sala="Medicina Nuclear" tv="1"/>
-      </b-col>
-    </b-row>
-
-    <b-row  align-h="center">
-      <b-col cols="5">
-          <resonanciamagnetica sala="Resonancia Magnetica" tv="1"/>
-      </b-col>
-    </b-row> -->
-    
-
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -86,3 +44,29 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+*{
+  font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+}
+  
+div.MD_contAllTT_players {
+  margin-top: 34px !important;
+  margin-bottom: 30px !important;
+  align-items: center;
+}
+
+.TT_indentificador_players{
+  background: #00B2A9;
+  height: 25px;
+  width: 7px;
+  border-radius: 1px;
+}
+
+.MD_contTT_players h2 {
+  margin-left: 8px;
+  font-weight: 700;
+  font-size: 35px;
+}
+</style>
+
