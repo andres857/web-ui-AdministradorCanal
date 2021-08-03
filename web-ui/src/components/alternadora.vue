@@ -1,23 +1,52 @@
 <template>
   <b-container>
+  
     <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-4 class="d-flex justify-content-between align-items-center">
+        <b-div class="MD_contAll_info_canal">
           
           <b-container >
-            <b-row align-h="start">
+            <b-row align-h="start" class="MD_cont_info_canal">
 
-              <b-col cols="2">
-                <b-icon style="margin-right: 15px" font-scale="1" icon="circle-fill" :variant="background"></b-icon>
-                <b-icon icon="display"></b-icon>
+              <b-div class="MD_cont_circleColor">
+                <b-icon font-scale=".8" icon="circle-fill" :variant="background"></b-icon>
+              </b-div>
+
+              <b-col class="MD_cont_adminCanales">
+                <b-icon font-scale="1.1" icon="display"></b-icon>
+                <div class="text-center"> Administrador de Canales </div> 
               </b-col>
 
-              <b-col cols="5">
-                <span class="text-center"> Administrador de Canales </span> 
-              </b-col>
+              <b-div class="MD_line"></b-div>
 
-              <b-col cols="5">
-                <span class="text-center"> <b> Canal actual </b> </span> |
+              <b-col>
+                <span class="text-center"> <b> Canal actual: </b> </span>
                 <span class="text-center"> {{receiveNews.currentStreaming}} </span>
+              </b-col>
+
+              <b-div class="MD_line"></b-div>
+
+              <b-col >
+                <span><strong>IPv4:</strong></span>
+                <span> {{receiveNews.ip4}}</span>
+              </b-col>
+
+              <b-div class="MD_line"></b-div>
+
+              <b-col >
+                <span><strong>MAC:</strong></span>
+                <span> {{receiveNews.MAC}}</span>         
+              </b-col>
+
+              <b-div class="MD_line"></b-div>
+
+              <b-col>
+                <b-icon icon="thermometer" font-scale="1.1"></b-icon>
+                <span> {{receiveNews.main}}°C </span>
+              </b-col>
+                
+              <b-col>
+                <b-icon icon="cpu" font-scale="1"></b-icon>
+                <span> {{receiveNews.currentLoad}}%  </span>
               </b-col>
       
             </b-row>
@@ -25,80 +54,40 @@
           </b-container>
             
 
-        </b-list-group-item>
+        </b-div>
 
-          <b-collapse id="collapse-4" class="mb-3" >
-            <b-card>
-                <b-container>
-                  <b-row >
-
-                    <b-col cols="6" >
-                        <div class="mt-1">
-                          <span><strong>IPv4</strong></span>
-                          <span> {{receiveNews.ip4}}</span>
-                          <br>
-                          <span><strong>MAC</strong></span>
-                          <span> {{receiveNews.MAC}}</span> 
-                        </div>           
-                    </b-col>
-
-                    <b-col cols="6">
-                        <b-col>
-                            <b-icon icon="thermometer" font-scale="1.5"></b-icon>
-                            {{receiveNews.main}} °C 
-                        </b-col>
-                        <b-col class="mt-2">
-                            <b-icon icon="cpu" font-scale="1.5"></b-icon>
-                            <span> {{receiveNews.currentLoad}}%  </span>
-                        </b-col>
-                    </b-col>
-                </b-row>
-
-                </b-container>
-            </b-card>
-          </b-collapse>
     </b-list-group>       
 
-    <b-row align-h="around" style="text-align:center">   
+    <div class="MD_cont_allLogosCanales_canal">
 
-      <b-col cols='3' class="p-2" >
-          <b-img width="250" height="150" :src="imbanaco" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
-      </b-col>  
+      <div class="MD_cont_LogoCanales_canal">
+        <b-row align-h="around" style="text-align:center">   
 
-      <b-col cols='2' class="p-2" >
-        <b-img width="150" height="150" :src="rcn" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
+          <b-col class="p-2 MD_cont_canal" >
+              <b-img :src="ImbanacoSrc" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
+          </b-col>  
 
-      </b-col>
+          <b-col class="p-2 MD_cont_canal" >
+            <b-img :src="rcnOff" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
+          </b-col> 
 
-    </b-row>   
+          <b-col class="p-2 MD_cont_canal" >
+            <b-img :src="tntOff" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
+          </b-col>
 
-    <b-row align-h="around" style="text-align:center">   
+          <b-col class="p-3 MD_cont_canal"  >
+            <b-img :src="caracolOn" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
+          </b-col>
 
-      <b-col cols='2' class="p-2" >
-        <b-img width="100" height="100" :src="tnt" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
-      </b-col>
+        </b-row> 
+      </div>  
 
-      <b-col cols='2' class="p-3"  >
-        <b-img width="120" height="120" :src="caracol" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
-      </b-col>
+        <b-col cols="8" class="MD_cont_btnReiniciar">
+          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Aplicativo </b-button>
+          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Reproductor </b-button>
+        </b-col>
 
-    </b-row> 
-      <b-col cols="8">
-        <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Todos los Player </b-button>
-        <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Todos los Dispositivos </b-button>
-      </b-col>
-
-    <b-row>
-      <b-button class="mt-2 pl-3" pill :variant=backgroundChannelwc >Imbanaco tv 
-            <b-icon class="ml-1" icon="circle-fill" :animation=animationChannelwc font-scale="1.1"></b-icon>
-      </b-button>
-
-      <b-button disabled  class="mt-2 pl-3" pill variant="danger">Caracol
-            <b-icon class="ml-1 " icon="circle-fill"  font-scale="1.1"></b-icon>
-      </b-button>
-    </b-row>
-
-
+    </div>
 
   </b-container>
 </template>
@@ -112,88 +101,98 @@ export default {
     'sala',
   ],
 
-  data() {
-    return {
-      caracol: require('../assets/Caracol.svg'),
-      tnt: require('../assets/tnt.svg'),
-      rcn: require('../assets/rcn.svg'),
-      imbanaco: require('../assets/imbanaco.svg'),
+data() {
+  return {
+    caracolOff: require('../assets/caracolOff.png'),
+    caracolOn: require('../assets/caracolOn.png'),
+    tntOff: require('../assets/tntOff.png'),
+    tntOn: require('../assets/tntOn.png'),
+    rcnOff: require('../assets/rcnOff.png'),
+    rcnOn: require('../assets/rcnOn.png'),
+    imbanacoOff: require('../assets/imbanacoOff.png'),
+    imbanacoOn: require('../assets/imbanacoOn.png'),
 
-        backgroundChannelwc:'success',
-        animationChannelwc:'throb',
-      
+      backgroundChannelwc:'success',
+      animationChannelwc:'throb',
+    
 
-      status:'',
-      background:'danger',
-      connection: {
-        host: 'broker.windowschannel.us',
-        port: 8083,
-        endpoint: '/mqtt',
-        clean: true, // Reserved session
-        connectTimeout: 4000, // Time out
-        reconnectPeriod: 10000, // Reconnection interval
+    status:'',
+    background:'danger',
+    connection: {
+      host: 'broker.windowschannel.us',
+      port: 8083,
+      endpoint: '/mqtt',
+      clean: true, // Reserved session
+      connectTimeout: 4000, // Time out
+      reconnectPeriod: 10000, // Reconnection interval
+    },
+    options:{
+        // Certification Information
+      clientId: 'webClientAlternadora',
+      username: 'emqx',
+      password: 'public',
+    },
+
+    topics: {
+      subscriber:{
+        currentStreaming:'imbanaco/principal/currentStreaming',
+        status:'imbanaco/principal/alternadora/b5c890/status',
       },
-      options:{
-          // Certification Information
-        clientId: 'webClientAlternadora',
-        username: 'emqx',
-        password: 'public',
+      publish:{
+        request: `imbanaco/principal/alternadora/b5c890/request`,
+        channel: `imbanaco/principal/players/channel`,
+        restart: `imbanaco/principal/players/restart`
       },
+    },
 
-      topics: {
-        subscriber:{
-          currentStreaming:'imbanaco/principal/currentStreaming',
-          status:'imbanaco/principal/alternadora/b5c890/status',
-        },
-        publish:{
-          request: `imbanaco/principal/alternadora/b5c890/request`,
-          channel: `imbanaco/principal/players/channel`,
-          restart: `imbanaco/principal/players/restart`
-        },
-      },
+    channels:{
+      wchannel: '{"channel":"imbanacotv"}',
+      caracol: '{"channel":"caracol"}',
+      rcn : '{"channel":"rcn"}',
+      tnt: '{"channel":"scolombia"}',
+    },
 
-      channels:{
-        wchannel: '{"channel":"imbanacotv"}',
-        caracol: '{"channel":"caracol"}',
-        rcn : '{"channel":"rcn"}',
-        tnt: '{"channel":"scolombia"}',
-      },
+    payloads:{
+      getStatus:'{ "status": "get" }',
+      restartAllPlayers: '{ "restart": "player" }',
+      restartAllDevices: '{ "restart": "device" }',
+    },
+    
+    qos: 2,
 
-      payloads:{
-        getStatus:'{ "status": "get" }',
-        restartAllPlayers: '{ "restart": "player" }',
-        restartAllDevices: '{ "restart": "device" }',
-      },
-      
-      qos: 2,
+    receiveNews: '',
+    
+  }
+},
+computed:{
+   ImbanacoSrc(){
+    if (this.receiveNews.emision == 'imbanacotv'){
 
-      receiveNews: '',
-      
+      return this.imbanacoOn
+    }else{
+      return this.imbanacoOff
     }
-  },
+  } 
+},
+methods: {
+    dochangeStreaming(channel){
+      this.client.publish(this.topics.publish.channel, channel, this.qos, error => {
+        if (error) {
+          console.log('Publish error', error)
+        }
+        console.log('Publish in the topic', this.topics.publish.channel,channel)
+      })
+    },
 
-  methods: {
-
-      dochangeStreaming(channel){
-        this.client.publish(this.topics.publish.channel, channel, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.channel,channel)
-        })
-      },
-
-      doRestartAll(target){
-        this.client.publish(this.topics.publish.restart, target, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.restart)
-        })
-      },
-   
-  },
-
+    doRestartAll(target){
+      this.client.publish(this.topics.publish.restart, target, this.qos, error => {
+        if (error) {
+          console.log('Publish error', error)
+        }
+        console.log('Publish in the topic', this.topics.publish.restart)
+      })
+    },
+},
 
 
   mounted:function(){
@@ -254,3 +253,119 @@ export default {
   }
 }
 </script>
+
+
+<style  scoped>
+
+.MD_contAll_info_canal{
+  padding: 5px;
+  background: #ffffff;
+  min-width: 96%;
+  margin: 0 auto;
+  border-radius: 5px;
+  margin-bottom: 54px;
+}
+
+.MD_cont_info_canal {
+  align-items: center;
+}
+
+.MD_cont_circleColor {
+  background: #F4F8F8;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  margin-right: 13px;
+}
+
+.MD_cont_adminCanales {
+  display: flex;
+  align-items: center;
+}
+
+.MD_cont_adminCanales svg {
+  margin-right: 6px;
+  fill: #00B2A9;
+}
+
+.MD_cont_adminCanales div {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #00B2A9;
+}
+
+.MD_cont_info_canal .col, .MD_cont_LogoCanales_canal div .col{
+  flex-basis: initial;
+  flex-grow: initial;
+  max-width: initial;
+  width: auto;
+  padding: 0;
+  text-align: center;
+}
+
+.MD_cont_info_canal .col span{
+  font-size: 0.9375rem;
+}
+
+.MD_cont_info_canal .col:nth-child(4){
+  min-width: 20.6%;
+}
+
+.MD_cont_info_canal .col:nth-child(6){
+  min-width: 13.9%;
+}
+
+.MD_cont_info_canal .col:nth-child(8){
+  min-width: 15.2%;
+}
+
+.MD_cont_info_canal .col:nth-child(10){
+  min-width: 7.4%;
+  margin-right: 10px;
+}
+
+.MD_line {
+  background: #908EA3;
+  height: 20px;
+  width: 1px;
+  margin: 0 15px;
+}
+
+.MD_cont_LogoCanales_canal div .MD_cont_canal {
+  background: #DFEDEC;
+  width: 119px;
+  height: 119px;
+  padding: 0;
+  margin: 0;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 38px;
+}
+
+.MD_cont_LogoCanales_canal div {
+ justify-content: space-evenly!important;
+}
+
+.MD_cont_allLogosCanales_canal {
+  width: 66%;
+  padding: 0 32px;
+}
+
+.MD_cont_btnReiniciar {
+  max-width: 100%;
+  text-align: center;
+}
+
+.MD_cont_btnReiniciar button {
+ margin: 0 11px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+</style>
