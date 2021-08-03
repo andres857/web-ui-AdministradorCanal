@@ -19,28 +19,12 @@
 
 <script>
 
-// import alternadora from '../components/alternadora.vue'
 import uci from '../components/uci.vue'
-// import urgencias from '../components/urgencias.vue'
-// import esperaadultos from '../components/esperaadultos.vue'
-// import radioterapia from '../components/radioterapia.vue'
-// import radioterapia2 from '../components/radioterapia2.vue'
-// import medicinanuclear from '../components/medicinanuclear.vue'
-// import resonanciamagnetica from '../components/resonanciamagnetica.vue'
-
-
 
 export default {
   name: 'App',
   components: {
-    // alternadora,
-    uci,    
-    // urgencias,
-    // esperaadultos,
-    // radioterapia,
-    // radioterapia2,
-    // medicinanuclear,
-    // resonanciamagnetica
+    uci,        
   }
 }
 </script>

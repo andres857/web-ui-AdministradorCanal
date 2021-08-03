@@ -1,5 +1,8 @@
 <template>
   <b-container>
+        {{receiveNews}}<hr>
+        {{receiveNews.emision}}
+
     <b-row align-h="center">
       <b-col cols="4">
         <b-alert 
@@ -29,7 +32,7 @@
               </b-col>
               
               <b-col cols= "4">
-                <b>Emision:</b> {{receiveNews.channel}}
+                <b>Emision:</b> {{receiveNews.emision}}
               </b-col>
               <b-col cols="2">
                 <div>
@@ -59,7 +62,7 @@
                           <b>Network:</b> <br>
                           <b style="margin-left:10px">IP</b>: {{receiveNews.ip4}}<br>
                           <b style="margin-left:10px">MAC</b>: {{receiveNews.MAC}}<br>
-                          <b>Visto ultima vez</b>: July 30th 2021, 8:29:35 pm
+                          <b>Visto ultima vez</b>: {{receiveNews.lastseen}}
                         </p>
                       </div>
                       <div>
@@ -175,6 +178,7 @@ export default {
         
         await client.subscribe(this.topics.subscriber.status, { qos:2 });
         await client.subscribe(this.topics.subscriber.currentStreaming, { qos:2 });
+        // await client.subscribe(this.topics.subscriber.response, { qos:2 });
 
         await client.publish(this.topics.publish.request, this.payloads.status, {qos:0});
 
@@ -206,6 +210,7 @@ export default {
 
         try {
           await client.publish(this.topics.publish.request, target, {qos:0});
+          
           console.log(`publicando`);
           this.showAlert()
           
