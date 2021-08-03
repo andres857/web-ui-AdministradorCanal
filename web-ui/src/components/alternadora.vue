@@ -64,7 +64,7 @@
         <b-row align-h="around" style="text-align:center">   
 
           <b-col class="p-2 MD_cont_canal" >
-              <b-img :src="imbanacoOff" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
+              <b-img :src="ImbanacoSrc" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
           </b-col>  
 
           <b-col class="p-2 MD_cont_canal" >
@@ -76,7 +76,7 @@
           </b-col>
 
           <b-col class="p-3 MD_cont_canal"  >
-            <b-img :src="caracolOff" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
+            <b-img :src="caracolOn" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
           </b-col>
 
         </b-row> 
@@ -164,7 +164,16 @@ data() {
     
   }
 },
+computed:{
+   ImbanacoSrc(){
+    if (this.receiveNews.emision == 'imbanacotv'){
 
+      return this.imbanacoOn
+    }else{
+      return this.imbanacoOff
+    }
+  } 
+},
 methods: {
     dochangeStreaming(channel){
       this.client.publish(this.topics.publish.channel, channel, this.qos, error => {
@@ -184,6 +193,7 @@ methods: {
       })
     },
 },
+
 
   mounted:function(){
       
