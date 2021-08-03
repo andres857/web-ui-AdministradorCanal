@@ -68,15 +68,15 @@
           </b-col>  
 
           <b-col class="p-2 MD_cont_canal" >
-            <b-img :src="rcnOff" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
+            <b-img :src="rcnSrc" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
           </b-col> 
 
           <b-col class="p-2 MD_cont_canal" >
-            <b-img :src="tntOff" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
+            <b-img :src="tntSrc" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
           </b-col>
 
           <b-col class="p-3 MD_cont_canal"  >
-            <b-img :src="caracolOn" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
+            <b-img :src="caracolSrc" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
           </b-col>
 
         </b-row> 
@@ -103,6 +103,7 @@ export default {
 
 data() {
   return {
+    // images
     caracolOff: require('../assets/caracolOff.png'),
     caracolOn: require('../assets/caracolOn.png'),
     tntOff: require('../assets/tntOff.png'),
@@ -115,7 +116,6 @@ data() {
       backgroundChannelwc:'success',
       animationChannelwc:'throb',
     
-
     status:'',
     background:'danger',
     connection: {
@@ -149,7 +149,7 @@ data() {
       wchannel: '{"channel":"imbanacotv"}',
       caracol: '{"channel":"caracol"}',
       rcn : '{"channel":"rcn"}',
-      tnt: '{"channel":"scolombia"}',
+      tnt: '{"channel":"tnt"}',
     },
 
     payloads:{
@@ -166,11 +166,31 @@ data() {
 },
 computed:{
    ImbanacoSrc(){
-    if (this.receiveNews.emision == 'imbanacotv'){
-
+    if (this.receiveNews.currentStreaming == 'imbanacotv'){
       return this.imbanacoOn
     }else{
       return this.imbanacoOff
+    }
+  },
+  caracolSrc(){
+    if (this.receiveNews.currentStreaming == 'caracol'){
+      return this.caracolOn
+    }else{
+      return this.caracolOff
+    }
+  },
+  rcnSrc(){
+    if (this.receiveNews.currentStreaming == 'rcn'){
+      return this.rcnOn
+    }else{
+      return this.rcnOff
+    }
+  },
+  tntSrc(){
+    if (this.receiveNews.currentStreaming == 'tnt'){
+      return this.tntOn
+    }else{
+      return this.tntOff
     }
   } 
 },
