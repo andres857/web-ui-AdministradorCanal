@@ -8,9 +8,15 @@
       </b-col>
     </b-row>
 
+    <!-- <b-row  align-h="center">
+      <b-col cols="12">
+          <uci sala="pruebas" tv="1"/>
+      </b-col>
+    </b-row> -->
+
     <b-row  align-h="center">
       <b-col cols="12">
-          <uci sala="Resonancia Magnetica" tv="1"/>
+          <resonanciamagnetica sala="Resonancia Magnetica" tv="1"/>
       </b-col>
     </b-row>
 
@@ -19,12 +25,14 @@
 
 <script>
 
-import uci from '../components/uci.vue'
+// import uci from '../components/uci.vue'
+import resonanciamagnetica from '../components/resonanciamagnetica.vue'
 
 export default {
   name: 'App',
   components: {
-    uci,        
+    resonanciamagnetica,
+    // uci,        
   }
 }
 </script>
