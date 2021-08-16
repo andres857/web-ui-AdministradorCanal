@@ -1,95 +1,82 @@
 <template>
   <b-container>
-    <b-list-group>
-        <b-list-group-item v-b-toggle.collapse-6 @click="getStatusPlayer" class="d-flex justify-content-between align-items-center" >
-          
-          <b-container >
-            <b-row align-h="around">
+        {{receiveNews}}<hr>
+        {{receiveNews.emision}}
+
+
+    <b-row>
+      <b-col>
+        <b-list-group>
+          <b-list-group-item>
+            <b-row align-h="center">
 
               <b-col cols="2">
                 <b-icon style="margin-right: 15px" font-scale="1" icon="circle-fill" :variant="background"></b-icon>
-                <b-icon icon="display"></b-icon>
+                <b-icon variant="outline-success" icon="display"></b-icon>
               </b-col>
-
-              <b-col cols="3">
-                <span class="text-center"> {{sala}} </span> |
-                <span class="text-center"> Tv{{tv}} </span>
+              <b-col cols= "4" >
+                 {{sala}} | Tv{{tv}}
               </b-col>
-
-              <b-col cols="4">
-                <span class="text-center"> <b> Emision </b> </span> |
-                <span class="text-center"> {{receiveNews.emision}} </span>
+              
+              <b-col cols= "4">
+                <b>Emision:</b> {{receiveNews.emision}}
               </b-col>
-      
-            </b-row>
-
-          </b-container>
-            
-
-        </b-list-group-item>
-
-          <b-collapse id="collapse-6" class="mb-3" >
-            <b-card>
-                <b-container>
-                  <b-row >
-
-                    <b-col cols="6" >
+              <b-col cols="2">
+                <div>
+                  <b-icon style="margin-right: 15px; fill: #00B2A9;
+                   margin-right: 6px; " font-scale="2" icon="card-checklist"  @click="showModal"></b-icon>
+                   
+                  <b-button v-b-tooltip.hover title="Reiniciar Aplicativo" class="mr-2" size="sm" variant="danger" @click="doRestart(payloads.restartPlayer)" >  <b-icon icon="collection-play"></b-icon> </b-button>
+                  <b-button v-b-tooltip.hover title="Reiniciar Reproductor" size="sm" variant="danger"  @click="doRestart(payloads.restartDevice)">  <b-icon icon="cast"></b-icon>  </b-button>                              
                         
-                        <div class="mt-1">
-                          <span><strong>IPv4</strong></span>
-                          <span> {{receiveNews.ip4}}</span>
+                    <b-modal ref="my-modal" hide-footer v-b-modal.modal-sm title="Reproductor Multimedia">
+                      <div>
+                        <p>
+                          <b>Id Reproductor</b>: 050345245
                           <br>
-                          <span><strong>MAC</strong></span>
-                          <span> {{receiveNews.MAC}}</span> 
+                          <b>Estado</b>
+                        </p>
+
+                        <div style="margin-left:10px; margin-top:-15px">
+                            {{receiveNews.main}}°C <b-icon icon="thermometer" font-scale="1.5"></b-icon> <br>    
+                            <span>{{receiveNews.currentLoad}} % </span>
+                            <b-icon icon="cpu" font-scale="1.5"></b-icon><br>
                         </div>
-                                                
-                    </b-col>
-
-                    <b-col cols="6">
-                        <b-col>
-                            <b-icon icon="thermometer" font-scale="1.5"></b-icon>
-                            {{receiveNews.main}} °C 
                             
-                        </b-col>
-                        <b-col class="mt-2">
-                            <b-icon icon="cpu" font-scale="1.5"></b-icon>
-                            <span> {{receiveNews.currentLoad}}%  </span>
-                        </b-col>
-                    </b-col>
-                </b-row>
-
-                <!-- button for a url to change streaming -->
-                <!-- <b-row align-h="center">
-                  <b-col cols="8">
-                      <b-form-input size="sm" class="mt-3" v-model="newStreaming" placeholder="Enter url Streaming rtsp://ip/0"></b-form-input>
-                  </b-col>
-                  <b-col cols="4" style="margin-left: -25px">
-                      <b-button size="sm" variant="success" class="mt-3" > Cambiar Emision </b-button>
-                  </b-col>
-                </b-row> -->
-                <!-- button for a url to change streaming -->
-
-                <b-row class="mt-1" align-h="center">
-                  
-                  <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="h4 mt-3" @click="doPublishpublishRestartPlayer"> Reiniciar Reproductor </b-button>
-                  </b-col>
-                  <b-col cols="4">
-                    <b-button size="sm" variant="danger" class="mt-3" @click="doPublishRestartDevice"> Reiniciar Player </b-button>
-                  </b-col>
-                </b-row>
-                </b-container>
-            </b-card>
-          </b-collapse>
-    </b-list-group>                        
+                        <p>
+                          <b>Canal</b>: Imbanaco TV <br>
+                          <b>Ubicacion</b>: {{sala}} | Tv{{tv}}<br> 
+                          <b>Network:</b> <br>
+                          <b style="margin-left:10px">IP</b>: {{receiveNews.ip4}}<br>
+                          <b style="margin-left:10px">MAC</b>: {{receiveNews.MAC}}<br>
+                          <b>Visto ultima vez</b>: {{receiveNews.lastseen}}
+                        </p>
+                      </div>
+                      <div>
+                        <b-button class="mt-3" variant="outline-danger"  @click="hideModal">Cerrar</b-button>
+                      </div>
+                      
+                    </b-modal>
+                </div>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+        </b-list-group>
+      </b-col>
+    </b-row>    
+    
   </b-container>
 </template>
 
 
 <script>
-const mqtt = require('mqtt')
+
+const mqtt = require('async-mqtt')
+let $body = document.querySelector("body");
+$body.style.backgroundColor = "#F4F8F8";
 
 export default {
+  
   props:[
     'sala',
     'tv',
@@ -97,11 +84,12 @@ export default {
 
   data() {
     return {
-      status:'',
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      client: '',
+      statusPayer: false,
+      channel:'',
       background:'danger',
-      NuevoCanal:'',
-      emision:'',
-      newStreaming:'',
       connection: {
         host: 'broker.windowschannel.us',
         port: 8083,
@@ -112,136 +100,127 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayerresonanciamagnetica',
+        clientId: 'webClientPlayersotano',
         username: 'emqx',
         password: 'public',
       },
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/resonanciamagnetica/tv1/ddcef5209dc54d318d0afc859a42b7c2/status',
-          currentStreaming:'imbanaco/principal/players/resonanciamagnetica/tv1/ddcef5209dc54d318d0afc859a42b7c2/currentStreaming',
+          status:'imbanaco/principal/players/Resonanciamagnetica/tv1/4451b1/status',
+          response: 'imbanaco/principal/players/Resonanciamagnetica/tv1/4451b1/response',
+          currentStreaming: 'imbanaco/principal/players/Resonanciamagnetica/tv1/4451b1/streaming'
         },
         publish:{
-          restart:'imbanaco/principal/players/resonanciamagnetica/tv1/ddcef5209dc54d318d0afc859a42b7c2/restart',
-          getStatus: 'imbanaco/principal/players/resonanciamagnetica/tv1/ddcef5209dc54d318d0afc859a42b7c2/getstatus',
-          urlStreaming:'imbanaco/principal/players/resonanciamagnetica/tv1/ddcef5209dc54d318d0afc859a42b7c2/urlStreaming',
+          request: 'imbanaco/principal/players/Resonanciamagnetica/tv1/4451b1/request',
+          restart: 'imbanaco/principal/players/restart',
         },
       },
 
       payloads:{
-        restartDevice:'{ "restart": "device" }',
-        restartPlayer:'{ "restart": "player" }',
-        getStatus: '{ "getstatus": "true" }',
-        urlStreaming: `{ "urlStreaming":"rtsp://ip/name" }`,
-      },
+        status: '{ "status": "device" }',
+        restartPlayer: '{ "restart": "player" }',
+        restartDevice: '{ "restart": "device" }',
+       },
       
-      qos: 0,
-
       receiveNews: '',
-      qosList: [
-        { label: 0, value: 0 },
-        { label: 1, value: 1 },
-        { label: 2, value: 2 },
-      ],
+
     }
   },
 
   methods: {
-
-   getStatusPlayer() {
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
-          
-        })
-    },
-
-    doPublishpublishRestartPlayer() {        
-        this.client.publish(this.topics.publish.restart, this.payloads.restartPlayer, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish in the topic', this.topics.publish.restart)
-        })
-    },
-    
-    doPublishRestartDevice() {
-        this.client.publish(this.topics.publish.restart, this.payloads.restartDevice, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.restart)
-        })
-    },
-
-    doPublishNewStreaming() {
-
-        this.client.publish(this.topics.publish.urlStreaming, this.payloads.urlStreaming, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.urlStreaming)
-        })
-    },
+  showModal() {
+    this.$refs['my-modal'].show()
+  },
+  hideModal() {
+    this.$refs['my-modal'].hide()
   },
 
-  mounted:function(){
+  countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+  },
+
+  showAlert() {
+    this.dismissCountDown = this.dismissSecs
+  },
       
-      const { host, port, endpoint} = this.connection
-      const connectUrl = `ws://${host}:${port}${endpoint}`
+   async conectar(){
+        // if (this.client) return this.client     
+          const { host, port, endpoint} = this.connection
+          const connectUrl = `ws://${host}:${port}${endpoint}`
+          let client = null
+            try {
+              client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+              console.log(`[ Client - Connected Successfull ]`);
 
-      try {
-        this.client = mqtt.connect(connectUrl,this.options)
-           } catch (error) {
-        console.log('mqtt.connect error', error)
-       }
-
-      this.client.on('connect', () => {
-        console.log('Connection success!')
-
-        this.client.subscribe(this.topics.subscriber.status,  this.qos , (error, res) => {
-            if (error) {
-                console.log('Subscribe to topics error', error)
-                return
+            } catch (error) {
+              console.log(`[ Client - Dont connected ] ${error}`)
             }
-        console.log('Subscribe to topics res', res)
-        }),
+          // this.client = client
+        return client
+   },
 
-        this.client.subscribe(this.topics.subscriber.currentStreaming,  this.qos , (error, res) => {
-            if (error) {
-                console.log('Subscribe to topics error', error)
-                return
-            }
-        console.log('Subscribe to topics res', res)
-        })
-
-        this.client.publish(this.topics.publish.getStatus, this.payloads.getStatus, this.qos, error => {
-          if (error) {
-            console.log('Publish error', error)
-          }
-          console.log('Publish  to topics', this.topics.publish.getStatus)
-        })
+   async getStatusPlayer() {
+        let client = await this.conectar()
         
-      })
+        await client.subscribe(this.topics.subscriber.status, { qos:2 });
+        await client.subscribe(this.topics.subscriber.currentStreaming, { qos:2 });
+        // await client.subscribe(this.topics.subscriber.response, { qos:2 });
 
-      this.client.on('error', error => {
-        console.log('Connection failed', error)
-      })
+        await client.publish(this.topics.publish.request, this.payloads.status, {qos:0});
 
-      this.client.on('message', (topic, message) => {
-        // this.receiveNews = this.receiveNews.concat(message)
+        console.log(`suscriber success to ${this.topics.subscriber.status} `);
+
+        client.on('message', async (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
-        this.receiveNews = JSON.parse(message);
-        if (this.receiveNews.status === 'connected') {
+        this.receiveNews = { ...this.receiveNews , ...JSON.parse(message)};
+        
+        if( topic == this.topics.subscriber.currentStreaming ){
+          this.channel = this.receiveNews.channel
+          
+        } else if (topic == this.topics.subscriber.status ) {
+
+          if(this.receiveNews.status === 'connected'){
              this.background = 'success'
-        }else{
-          this.background = 'danger'
+          }else
+           this.background = 'danger'
+          await client.end()
+          console.log(`Cerrando Conexion al broker`);
         }
-        console.log(this.receiveNews)
       })
+
+    },
+
+    async doRestart(target) {
+
+        let client = await this.conectar()
+
+        try {
+          await client.publish(this.topics.publish.request, target, {qos:0});
+          
+          console.log(`publicando`);
+          this.showAlert()
+          
+        } catch (error) {
+          console.log(`Error al publicar`);
+        }
+    }
+  },
+
+  mounted:function () {
+    this.getStatusPlayer()
   }
 }
+
 </script>
+
+<style scoped>
+*{
+  font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+}
+
+.MD_cont_adminPlayer svg {
+  margin-right: 6px;
+  fill: #00B2A9;
+}
+</style>
