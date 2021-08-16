@@ -1,6 +1,6 @@
 <template>
   <b-container>
-        {{receiveNews}}<hr>
+        {{receiveNews}}<br>
         {{receiveNews.emision}}
 
     <b-row align-h="center">
@@ -57,7 +57,7 @@
                         </div>
                             
                         <p>
-                          <b>Canal</b>: Imbanaco TV <br>
+                          <b>Canal</b>: {{receiveNews.emision}} <br>
                           <b>Ubicacion</b>: {{sala}} | Tv{{tv}}<br> 
                           <b>Network:</b> <br>
                           <b style="margin-left:10px">IP</b>: {{receiveNews.ip4}}<br>
@@ -104,8 +104,8 @@ export default {
       channel:'',
       background:'danger',
       connection: {
-        host: 'broker.windowschannel.us',
-        port: 8083,
+        host: 'brokerimbanaco.windowschannel.com',
+        port: 8085,
         endpoint: '/mqtt',
         clean: true, // Reserved session
         connectTimeout: 4000, // Time out
@@ -113,19 +113,19 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayersotano',
+        clientId: 'webClientPlayertest',
         username: 'emqx',
         password: 'public',
       },
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/pruebas/tv1/4451b1/status',
-          response: 'imbanaco/principal/players/pruebas/tv1/4451b1/response',
-          currentStreaming: 'imbanaco/principal/players/pruebas/tv1/4451b1/streaming'
+          status:'imbanaco/principal/players/test/tv1/27151e/status',
+          response: 'imbanaco/principal/players/test/tv1/27151e/response',
+          currentStreaming: 'imbanaco/principal/players/test/tv1/27151e/streaming'
         },
         publish:{
-          request: 'imbanaco/principal/players/pruebas/tv1/4451b1/request',
+          request: 'imbanaco/principal/players/test/tv1/27151e/request',
           restart: 'imbanaco/principal/players/restart',
         },
       },
@@ -160,7 +160,7 @@ export default {
    async conectar(){
         // if (this.client) return this.client     
           const { host, port, endpoint} = this.connection
-          const connectUrl = `ws://${host}:${port}${endpoint}`
+          const connectUrl = `wss://${host}:${port}${endpoint}`
           let client = null
             try {
               client = await mqtt.connectAsync(`${connectUrl}`,this.options)
@@ -182,7 +182,8 @@ export default {
 
         await client.publish(this.topics.publish.request, this.payloads.status, {qos:0});
 
-        console.log(`suscriber success to ${this.topics.subscriber.status} `);
+        console.log(`suscriber success to \n ${this.topics.subscriber.status} 
+                    \n ${this.topics.subscriber.currentStreaming} `);
 
         client.on('message', async (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
@@ -194,9 +195,9 @@ export default {
         } else if (topic == this.topics.subscriber.status ) {
 
           if(this.receiveNews.status === 'connected'){
-             this.background = 'success'
+            this.background = 'success'
           }else
-           this.background = 'danger'
+            this.background = 'danger'
           await client.end()
           console.log(`Cerrando Conexion al broker`);
         }
@@ -211,7 +212,7 @@ export default {
         try {
           await client.publish(this.topics.publish.request, target, {qos:0});
           
-          console.log(`publicando`);
+          console.log(`publicando en el topic ${this.topics.publish.request} el mensaje ${target}`);
           this.showAlert()
           
         } catch (error) {

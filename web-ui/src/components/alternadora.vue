@@ -83,8 +83,8 @@
       </div>  
 
         <b-col cols="8" class="MD_cont_btnReiniciar">
-          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Aplicativo </b-button>
-          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Reproductor </b-button>
+          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllPlayers)"> Reiniciar Todos Los Aplicativos </b-button>
+          <b-button size="sm" variant="danger" class="mt-3" @click="doRestartAll(payloads.restartAllDevices)"> Reiniciar Todos Los Reproductores </b-button>
         </b-col>
 
     </div>
@@ -113,18 +113,21 @@ data() {
     imbanacoOff: require('../assets/imbanacoOff.png'),
     imbanacoOn: require('../assets/imbanacoOn.png'),
 
-      backgroundChannelwc:'success',
-      animationChannelwc:'throb',
+    backgroundChannelwc:'success',
+    animationChannelwc:'throb',
     
     status:'',
     background:'danger',
+
+
     connection: {
-      host: 'broker.windowschannel.us',
-      port: 8083,
+      host: 'brokerimbanaco.windowschannel.com',
+      port: 8085,//port web socket
       endpoint: '/mqtt',
       clean: true, // Reserved session
       connectTimeout: 4000, // Time out
       reconnectPeriod: 10000, // Reconnection interval
+      
     },
     options:{
         // Certification Information
@@ -146,7 +149,7 @@ data() {
     },
 
     channels:{
-      wchannel: '{"channel":"imbanacotv"}',
+      wchannel: '{"channel":"Imbanaco tv"}',
       caracol: '{"channel":"caracol"}',
       rcn : '{"channel":"rcn"}',
       tnt: '{"channel":"tnt"}',
@@ -159,14 +162,14 @@ data() {
     },
     
     qos: 2,
-
     receiveNews: '',
     
   }
 },
+
 computed:{
-   ImbanacoSrc(){
-    if (this.receiveNews.currentStreaming == 'imbanacotv'){
+  ImbanacoSrc(){
+    if (this.receiveNews.currentStreaming == 'Imbanaco tv'){
       return this.imbanacoOn
     }else{
       return this.imbanacoOff
@@ -194,13 +197,15 @@ computed:{
     }
   } 
 },
+
 methods: {
+
     dochangeStreaming(channel){
       this.client.publish(this.topics.publish.channel, channel, this.qos, error => {
         if (error) {
           console.log('Publish error', error)
         }
-        console.log('Publish in the topic', this.topics.publish.channel,channel)
+        console.log('Publish in the topic', this.topics.publish.channel, channel)
       })
     },
 
@@ -214,16 +219,15 @@ methods: {
     },
 },
 
-
   mounted:function(){
       
       const { host, port, endpoint} = this.connection
-      const connectUrl = `ws://${host}:${port}${endpoint}`
+      const connectUrl = `wss://${host}:${port}${endpoint}`
 
       try {
         this.client = mqtt.connect(connectUrl,this.options)
            } catch (error) {
-        console.log('mqtt.connect error', error)
+        console.log('mqtt connect error', error)
        }
 
       this.client.on('connect', () => {
@@ -262,7 +266,8 @@ methods: {
       this.client.on('message', (topic, message) => {
         // this.receiveNews = this.receiveNews.concat(message)
         console.log(`Received message ${message} from topic ${topic}`)
-        this.receiveNews = JSON.parse(message);
+        this.receiveNews = { ...this.receiveNews , ...JSON.parse(message)};
+
         if (this.receiveNews.status === 'connected') {
              this.background = 'success'
         }else{
