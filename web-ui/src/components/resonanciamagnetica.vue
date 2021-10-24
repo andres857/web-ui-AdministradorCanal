@@ -92,7 +92,7 @@ export default {
       background:'danger',
       connection: {
         host: 'broker.windowschannel.us',
-        port: 8083,
+        port: 8084,
         endpoint: '/mqtt',
         clean: true, // Reserved session
         connectTimeout: 4000, // Time out
@@ -147,7 +147,7 @@ export default {
    async conectar(){
         // if (this.client) return this.client     
           const { host, port, endpoint} = this.connection
-          const connectUrl = `ws://${host}:${port}${endpoint}`
+          const connectUrl = `wss://${host}:${port}${endpoint}`
           let client = null
             try {
               client = await mqtt.connectAsync(`${connectUrl}`,this.options)

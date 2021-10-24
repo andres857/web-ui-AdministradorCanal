@@ -80,6 +80,27 @@
           </b-col>
 
         </b-row> 
+
+        <b-row align-h="around" style="text-align:center">   
+
+          <b-col class="p-2 MD_cont_canal" >
+              <b-img :src="espnSrc" style="cursor: pointer" @click="dochangeStreaming(channels.wchannel)" ></b-img>
+          </b-col>  
+
+          <b-col class="p-2 MD_cont_canal" >
+            <b-img :src="historySrc" style="cursor: pointer" @click="dochangeStreaming(channels.rcn)"></b-img>
+          </b-col> 
+
+          <b-col class="p-2 MD_cont_canal" >
+            <b-img :src="nickSrc" style="cursor: pointer" @click="dochangeStreaming(channels.tnt)" ></b-img>
+          </b-col>
+
+          <b-col class="p-3 MD_cont_canal"  >
+            <b-img :src="teleantioquiaSrc" style="cursor: pointer" @click="dochangeStreaming(channels.caracol)" ></b-img>
+          </b-col>
+
+        </b-row>
+
       </div>  
 
         <b-col cols="8" class="MD_cont_btnReiniciar">
@@ -113,6 +134,15 @@ data() {
     imbanacoOff: require('../assets/imbanacoOff.png'),
     imbanacoOn: require('../assets/imbanacoOn.png'),
 
+    historyOff: require('../assets/historyOff.png'),
+    historyOn: require('../assets/historyOff.png'),
+    espnOff: require('../assets/espnOff.png'),
+    espnOn: require('../assets/espnOn.png'),
+    nickOff: require('../assets/nicklOff.png'),
+    nickOn: require('../assets/nicklOn.png'),
+    teleantioquiaOff: require('../assets/teleantioquiaOff.png'),
+    teleantioquiaOn: require('../assets/teleantioquiaOn.png'),
+
     backgroundChannelwc:'success',
     animationChannelwc:'throb',
     
@@ -122,7 +152,7 @@ data() {
 
     connection: {
       host: 'brokerimbanaco.windowschannel.com',
-      port: 8085,//port web socket
+      port: 8084,//port web socket
       endpoint: '/mqtt',
       clean: true, // Reserved session
       connectTimeout: 4000, // Time out
@@ -153,6 +183,10 @@ data() {
       caracol: '{"channel":"caracol"}',
       rcn : '{"channel":"rcn"}',
       tnt: '{"channel":"tnt"}',
+      espn: '{"channel":"espn"}',
+      history: '{"channel":"history"}',
+      nick: '{"channel":"nick"}',
+      teleantioquia: '{"channel":"teleantioquia"}'
     },
 
     payloads:{
@@ -195,7 +229,36 @@ computed:{
     }else{
       return this.tntOff
     }
-  } 
+  },
+  espnSrc(){
+    if (this.receiveNews.currentStreaming == 'espn'){
+      return this.espnOn
+    }else{
+      return this.espnOff
+    }
+  },
+  historySrc(){
+    if (this.receiveNews.currentStreaming == 'history'){
+      return this.historyOn
+    }else{
+      return this.historyOff
+    }
+  },
+  nickSrc(){
+    if (this.receiveNews.currentStreaming == 'nick'){
+      return this.nickOn
+    }else{
+      return this.nickOff
+    }
+  },
+  teleantioquiaSrc(){
+    if (this.receiveNews.currentStreaming == 'teleantioquia'){
+      return this.teleantioquiaOn
+    }else{
+      return this.teleantioquiaOff
+    }
+  },
+ 
 },
 
 methods: {

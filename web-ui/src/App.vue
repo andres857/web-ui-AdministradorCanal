@@ -1,7 +1,8 @@
 <template>
-  <div id="app">
+<div id="app">
    <b-navbar toggleable="lg" type="dark" variant="dark">
      <b-container>
+
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
           <b-navbar-brand href="/canal">
             <b-img :src='imbanacoLogo' style="cursor: pointer" ></b-img>
@@ -9,8 +10,8 @@
         <b-collapse id="nav-collapse" is-nav>
 
           <b-navbar-nav  style="width: 100%" align="right">
+
             <b-nav-item :to="{name: 'Players'}" >Players</b-nav-item>
-            <!-- <b-nav-item :to="{name: 'Salas'}">Salas</b-nav-item> -->
             <b-nav-item :to="{name: 'Canal'}">Canal</b-nav-item>
             
           </b-navbar-nav> 

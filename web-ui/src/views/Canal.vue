@@ -68,7 +68,7 @@ export default {
         poster:'https://mediawebwordpress.nyc3.cdn.digitaloceanspaces.com/imbanaco/bgwc.png',
         sources: [ 
           { 
-            src:"https://rtmpetb.windowschannel.us/hls/streaming.m3u8",
+            src:"https://rtmpwindowschannelwinbox.windowschannel.com/hls/wcwinbox.m3u8",
             type: "application/x-mpegURL" }
           ], 
       },
