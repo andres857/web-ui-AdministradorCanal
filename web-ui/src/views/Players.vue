@@ -16,7 +16,7 @@
 
     <b-row  align-h="center">
       <b-col cols="12">
-          <resonanciamagnetica sala="Resonancia Magnetica1" tv="1"/>
+          <resonanciamagnetica sala="Resonancia Magnetica" tv="1"/>
       </b-col>
     </b-row>
 
