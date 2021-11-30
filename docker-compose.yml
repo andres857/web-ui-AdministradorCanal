@@ -1,49 +1,15 @@
 version: "3.0"                     
 
 services:    
-
-  emqx-wc:
-      image: emqx/emqx:latest
-      volumes:
-      # #   - ./broker/plugins:/opt/emqx/etc/plugins
-        - ./broker/certs/key.pem:/opt/emqx/etc/certs/emqx.key
-        - ./broker/certs/fullchain.pem:/opt/emqx/etc/certs/emqx.crt
-        # - .broker/certs/brokerwc.windowschannel.com.ca:/opt/emqx/etc/certs/emqx.ca
-
-      environment:
-        - EMQX_NAME=windowschannel
-        - EMQX_HOST=brokerwc.windowschannel.com
-        - EMQX_LISTENER__SSL__EXTERNAL__KEYFILE=etc/certs/emqx.key
-        - EMQX_LISTENER__SSL__EXTERNAL__CERTFILE=etc/certs/emqx.crt
-        # - EMQX_LISTENER__SSL__EXTERNAL__CACERTFILE=etc/certs/emqx.ca
-        - EMQX_LISTENER__WSS__EXTERNAL__KEYFILE=etc/certs/emqx.key
-        - EMQX_LISTENER__WSS__EXTERNAL__CERTFILE=etc/certs/emqx.crt
-        # - EMQX_LISTENER__WSS__EXTERNAL__CACERTFILE=etc/certs/emqx.ca
-        - VIRTUAL_HOST=brokerwc.windowschannel.com
-        - VIRTUAL_PORT=18083
-        - EMQX_LOADED_PLUGINS=emqx_management,emqx_dashboard
-        - LETSENCRYPT_HOST=brokerwc.windowschannel.com
-        - LETSENCRYPT_EMAIL=info@windowschannel.com
-      expose:
-         - "18083"
-      
-      ports:
-        - "1883:1883" # MQTT
-        - "8883:8883" # MQTT/SSL
-        - "8083:8083" # MQTT/WS
-        - "8084:8084" # MQTT/WSS
-        - "8081:8081" # api http
-        - "8082:8082" # api https
-        # - "18083:18083" # Dashboard
-
   web-ui:
+    #Include variables for allow https
     image: web-ui-dev
+    restart: always
     container_name: container-web-ui-dev
     build:
       context: ./web-ui
       dockerfile: Dockerfile
-    environment:
-      
+    environment:      
      - VIRTUAL_HOST=administradorcanales.windowschannel.com
      - LETSENCRYPT_HOST=administradorcanales.windowschannel.com
      - LETSENCRYPT_EMAIL=info@windowschannel.com
@@ -56,6 +22,7 @@ services:
 
   nginx-rtmp-winbox:
     container_name: server-rtmp-winbox
+    restart: always
     build:
       context: ./server-rtmp-container
       dockerfile: Dockerfile
@@ -64,13 +31,13 @@ services:
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=rtmpwindowschannelwinbox.windowschannel.com
       - LETSENCRYPT_EMAIL=info@windowschannel.com
-
     volumes:
       - ./server-rtmp-container/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf
     ports:
       - 8080:8080
       - 1935:1935
-
+  
+  #Production
   # nginx-web:
   #    image: nginx:1.19.0-alpine
   #    depends_on:

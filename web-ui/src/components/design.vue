@@ -1,22 +1,5 @@
 <template>
   <b-container>
-        {{receiveNews}}<br>
-        {{receiveNews.emision}}
-
-    <b-row align-h="center">
-      <b-col cols="4">
-        <b-alert 
-          :show="dismissCountDown"
-          dismissible
-          variant="success"
-          @dismissed="dismissCountDown=0"
-          @dismiss-count-down="countDownChanged"
-        >
-        <p > <b-icon variant="outline-success" icon="check-circle"></b-icon> Reinicio Exitoso! </p>
-        </b-alert>
-      </b-col>
-    </b-row>
-
     <b-row>
       <b-col>
         <b-list-group>
@@ -32,16 +15,13 @@
               </b-col>
               
               <b-col cols= "4">
-                <b>Emision:</b> {{receiveNews.emision}}
+                <b>Emision:</b> {{receiveNews.channel}}
               </b-col>
               <b-col cols="2">
                 <div>
                   <b-icon style="margin-right: 15px; fill: #00B2A9;
                    margin-right: 6px; " font-scale="2" icon="card-checklist"  @click="showModal"></b-icon>
-                   
-                  <b-button v-b-tooltip.hover title="Reiniciar Aplicativo" class="mr-2" size="sm" variant="danger" @click="doRestart(payloads.restartPlayer)" >  <b-icon icon="collection-play"></b-icon> </b-button>
-                  <b-button v-b-tooltip.hover title="Reiniciar Reproductor" size="sm" variant="danger"  @click="doRestart(payloads.restartDevice)">  <b-icon icon="cast"></b-icon>  </b-button>                              
-                        
+                    <b-button v-b-tooltip.hover title="Reiniciar Reproductor" size="sm" variant="danger"  @click="doRestart(payloads.restartDevice)">  <b-icon icon="cast"></b-icon>  </b-button>    
                     <b-modal ref="my-modal" hide-footer v-b-modal.modal-sm title="Reproductor Multimedia">
                       <div>
                         <p>
@@ -57,18 +37,16 @@
                         </div>
                             
                         <p>
-                          <b>Canal</b>: {{receiveNews.emision}} <br>
+                          <b>Canal</b>: {{receiveNews.channel}} <br>
                           <b>Ubicacion</b>: {{sala}} | Tv{{tv}}<br> 
                           <b>Network:</b> <br>
                           <b style="margin-left:10px">IP</b>: {{receiveNews.ip4}}<br>
                           <b style="margin-left:10px">MAC</b>: {{receiveNews.MAC}}<br>
-                          <b>Visto ultima vez</b>: {{receiveNews.lastseen}}
                         </p>
                       </div>
                       <div>
                         <b-button class="mt-3" variant="outline-danger"  @click="hideModal">Cerrar</b-button>
                       </div>
-                      
                     </b-modal>
                 </div>
               </b-col>
@@ -100,12 +78,13 @@ export default {
       dismissSecs: 5,
       dismissCountDown: 0,
       client: '',
-      statusPayer: false,
       channel:'',
       background:'danger',
+      receiveNews: '',
+
       connection: {
-        host: 'brokerimbanaco.windowschannel.com',
-        port: 8085,
+        host: 'brokerwc.windowschannel.com',
+        port: 8084,
         endpoint: '/mqtt',
         clean: true, // Reserved session
         connectTimeout: 4000, // Time out
@@ -113,31 +92,26 @@ export default {
       },
       options:{
           // Certification Information
-        clientId: 'webClientPlayertest',
+        clientId: 'webClientPlayerdesign',
         username: 'emqx',
         password: 'public',
       },
 
       topics: {
         subscriber:{
-          status:'imbanaco/principal/players/test/tv1/27151e/status',
-          response: 'imbanaco/principal/players/test/tv1/27151e/response',
-          currentStreaming: 'imbanaco/principal/players/test/tv1/27151e/streaming'
+          status:'player/status/1b90b8',
+          response: 'player/response/1b90b8',
+          currentStreaming: 'player/currentstreaming/1b90b8'
         },
         publish:{
-          request: 'imbanaco/principal/players/test/tv1/27151e/request',
-          restart: 'imbanaco/principal/players/restart',
+          request: 'player/request/1b90b8'
         },
       },
-
       payloads:{
         status: '{ "status": "device" }',
-        restartPlayer: '{ "restart": "player" }',
+        volume: '{ "volume": "1" }',//Cambiar el valor de volumen desde la vista
         restartDevice: '{ "restart": "device" }',
        },
-      
-      receiveNews: '',
-
     }
   },
 
@@ -148,29 +122,26 @@ export default {
   hideModal() {
     this.$refs['my-modal'].hide()
   },
-
   countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown
   },
-
   showAlert() {
     this.dismissCountDown = this.dismissSecs
   },
       
    async conectar(){
-        // if (this.client) return this.client     
-          const { host, port, endpoint} = this.connection
-          const connectUrl = `wss://${host}:${port}${endpoint}`
-          let client = null
-            try {
-              client = await mqtt.connectAsync(`${connectUrl}`,this.options)
-              console.log(`[ Client - Connected Successfull ]`);
-
-            } catch (error) {
-              console.log(`[ Client - Dont connected ] ${error}`)
-            }
-          // this.client = client
-        return client
+    // if (this.client) return this.client     
+      const { host, port, endpoint} = this.connection
+      const connectUrl = `wss://${host}:${port}${endpoint}`
+      let client = null
+        try {
+          client = await mqtt.connectAsync(`${connectUrl}`,this.options)
+          console.log(`[ Client - Connected Successfull to Broker ]`);
+        } catch (error) {
+          console.log(`[ Client - Error to connected to Broker : ${error} ]`)
+        }
+      // this.client = client
+    return client
    },
 
    async getStatusPlayer() {
@@ -178,29 +149,24 @@ export default {
         
         await client.subscribe(this.topics.subscriber.status, { qos:2 });
         await client.subscribe(this.topics.subscriber.currentStreaming, { qos:2 });
-        // await client.subscribe(this.topics.subscriber.response, { qos:2 });
+        await client.subscribe(this.topics.subscriber.response, { qos:2 });
 
         await client.publish(this.topics.publish.request, this.payloads.status, {qos:0});
 
-        console.log(`suscriber success to \n ${this.topics.subscriber.status} 
-                    \n ${this.topics.subscriber.currentStreaming} `);
+        console.log(`suscriber success to ${this.topics.subscriber.status} `);
+        console.log(`suscriber success to ${this.topics.subscriber.currentStreaming} `);
+        console.log(`suscriber success to ${this.topics.subscriber.response} `);
+
 
         client.on('message', async (topic, message) => {
         console.log(`Received message ${message} from topic ${topic}`)
         this.receiveNews = { ...this.receiveNews , ...JSON.parse(message)};
-        
-        if( topic == this.topics.subscriber.currentStreaming ){
+        if((this.receiveNews.currentLoad || this.receiveNews.main) != null){
+          this.background = 'success'
+        }else if( topic == this.topics.subscriber.currentStreaming ){
           this.channel = this.receiveNews.channel
-          
-        } else if (topic == this.topics.subscriber.status ) {
-
-          if(this.receiveNews.status === 'connected'){
-            this.background = 'success'
-          }else
-            this.background = 'danger'
-          await client.end()
-          console.log(`Cerrando Conexion al broker`);
-        }
+          console.log(`Canal recibido del player ${this.channel}`)
+          }
       })
 
     },
@@ -212,7 +178,7 @@ export default {
         try {
           await client.publish(this.topics.publish.request, target, {qos:0});
           
-          console.log(`publicando en el topic ${this.topics.publish.request} el mensaje ${target}`);
+          console.log(`publicando`);
           this.showAlert()
           
         } catch (error) {
