@@ -11,14 +11,8 @@
     <div class="MD_cont_alterAll">
       <alternadora sala="Alternadora" tv=""/>
     </div>
-    <!-- <b-row align-h="around" >
 
-      <b-col cols="7">
-      </b-col>
-
-
-    </b-row> -->
-
+   <!-- Bloque Canales -->
     <b-col cols="5" class="channels MD_contAll_video">
         <div>
           <h4 class="text-center MD_contTT_canales">CANALES</h4>
@@ -34,7 +28,7 @@
 
       <div class="MD_contVideos">
         <b-button disabled  class="mt-2 pl-3 MD_videos_TT" pill variant="danger">
-          <b-icon class="mr-1 " icon="circle-fill"  font-scale="1.1"></b-icon>Caracol
+          <b-icon class="mr-1 " icon="circle-fill"  font-scale="1.1"></b-icon>Canal Comercial
         </b-button>
 
         <videoplayerwcomercial :options="videoOptionsComercial"/>
@@ -68,7 +62,7 @@ export default {
         poster:'https://mediawebwordpress.nyc3.cdn.digitaloceanspaces.com/imbanaco/bgwc.png',
         sources: [ 
           { 
-            src:"https://rtmpwindowschannelwinbox.windowschannel.com/hls/wcwinbox.m3u8",
+            src:"https://rtmpwindowschanneletb.windowschannel.com/hls/comercial.m3u8",
             type: "application/x-mpegURL" }
           ], 
       },
@@ -81,7 +75,7 @@ export default {
         poster:'https://mediawebwordpress.nyc3.cdn.digitaloceanspaces.com/imbanaco/bgcomercial.png',
         sources: [ 
           { 
-            src: "https://rtmpimbanaco.windowschannel.us/hls/streaming.m3u8",
+            src: "https://rtmpwindowschannelwinbox.windowschannel.com/hls/wcwinbox.m3u8",
             type: "application/x-mpegURL" }
           ], 
       },

@@ -1,10 +1,7 @@
 <template>
     <b-container>
-        
             <input type="text" v-model="nuevaFruta" @keyup.enter="addFruit">
             <button @click="addFruit"> Add </button>
-
-
         <b-row>
             <ul>
                 <li v-for="fruta in frutas" :key="fruta">
@@ -16,8 +13,7 @@
                 </li>
             </ul>
             </b-row>
-                            <h1> Total : {{}} </h1>
-
+        <h1> Total : {{}} </h1>
     </b-container>
 </template>
 

@@ -3,7 +3,6 @@
   
     <b-list-group>
         <b-div class="MD_contAll_info_canal">
-          
           <b-container >
             <b-row align-h="start" class="MD_cont_info_canal">
 
@@ -22,40 +21,10 @@
                 <span class="text-center"> <b> Canal actual: </b> </span>
                 <span class="text-center"> {{receiveNews.currentStreaming}} </span>
               </b-col>
-
-              <b-div class="MD_line"></b-div>
-
-              <b-col >
-                <span><strong>IPv4:</strong></span>
-                <span> {{receiveNews.ip4}}</span>
-              </b-col>
-
-              <b-div class="MD_line"></b-div>
-
-              <b-col >
-                <span><strong>MAC:</strong></span>
-                <span> {{receiveNews.MAC}}</span>         
-              </b-col>
-
-              <b-div class="MD_line"></b-div>
-
-              <b-col>
-                <b-icon icon="thermometer" font-scale="1.1"></b-icon>
-                <span> {{receiveNews.main}}°C </span>
-              </b-col>
-                
-              <b-col>
-                <b-icon icon="cpu" font-scale="1"></b-icon>
-                <span> {{receiveNews.currentLoad}}%  </span>
-              </b-col>
-      
+              <b-div class="MD_line"></b-div>      
             </b-row>
-
           </b-container>
-            
-
         </b-div>
-
     </b-list-group>       
 
     <div class="MD_cont_allLogosCanales_canal">

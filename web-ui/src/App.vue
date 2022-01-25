@@ -9,12 +9,12 @@
           </b-navbar-brand>
         <b-collapse id="nav-collapse" is-nav>
 
-          <b-navbar-nav  style="width: 100%" align="right">
+        <b-navbar-nav  style="width: 100%" align="right">
 
-            <b-nav-item :to="{name: 'Players'}" >Players</b-nav-item>
-            <b-nav-item :to="{name: 'Canal'}">Canal</b-nav-item>
-            
-          </b-navbar-nav> 
+          <b-nav-item :to="{name: 'Players'}" >Players</b-nav-item>
+          <b-nav-item :to="{name: 'Canal'}">Canal</b-nav-item>
+          
+        </b-navbar-nav> 
         </b-collapse> 
      </b-container>
    </b-navbar>

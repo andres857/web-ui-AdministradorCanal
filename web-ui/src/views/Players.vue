@@ -16,50 +16,30 @@
 
     <b-row  align-h="center">
       <b-col cols="12">
-          <tekteam sala="tekteam" tv="1"/>
+          <tekteam sala="Tekteam" tv="1"/>
       </b-col>
     </b-row>
 
     <b-row  align-h="center">
       <b-col cols="12">
-          <comunicaciones1 sala="comunicaciones" tv="1"/>
+          <comunicaciones sala="Comunicaciones" tv="1"/>
       </b-col>
     </b-row>
-
-    <b-row  align-h="center">
-      <b-col cols="12">
-          <comunicaciones2 sala="Comunicaciones" tv="2"/>
-      </b-col>
-    </b-row>
-
-    <b-row  align-h="center">
-      <b-col cols="12">
-          <design sala="Diseno" tv="1"/>
-      </b-col>
-    </b-row>
-
   </b-container>
 </template>
 
 <script>
-
-// import uci from '../components/uci.vue'
 import resonanciamagnetica from '../components/resonanciamagnetica.vue'
 import tekteam from '../components/tekteam.vue'
-import comunicaciones1 from '../components/comunicaciones1.vue'
-import comunicaciones2 from '../components/comunicaciones2.vue'
-import design from '../components/design.vue'
-
+import comunicaciones from '../components/comunicaciones.vue'
 
 
 export default {
   name: 'App',
   components: {
-    resonanciamagnetica,
+    resonanciamagnetica,       
     tekteam,
-    comunicaciones1,
-    comunicaciones2,
-    design        
+    comunicaciones
   }
 }
 </script>

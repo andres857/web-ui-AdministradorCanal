@@ -22,7 +22,7 @@
                 <b-row align-h="center">
                   <b-col cols="2">
                     <div>
-                      <b-button v-b-toggle="'collapse-tekteam'" variant="success">+</b-button>
+                      <b-button v-b-toggle="'collapse-comunicaciones'" variant="success">+</b-button>
                     </div>
                   </b-col>
                   <b-col>
@@ -63,7 +63,7 @@
             </b-row>
             <div>
               <!-- Element to collapse -->
-              <b-collapse id="collapse-tekteam">
+              <b-collapse id="collapse-comunicaciones">
               <!-- button for a url to change streaming -->
                   <b-row align-h="center">
                     <b-col cols="8">
@@ -128,13 +128,13 @@ export default {
 
       topics: {
         subscriber:{
-          status:'windowschannel/player/status/8f370d',
-          response: 'windowschannel/player/response/8f370d',
-          currentStreaming: 'windowschannel/player/currentstreaming/8f370d'
+          status:'windowschannel/player/status/15a6ec',
+          response: 'windowschannel/player/response/15a6ec',
+          currentStreaming: 'windowschannel/player/currentstreaming/15a6ec'
         },
         publish:{
-          request: 'windowschannel/player/request/8f370d',
-          newStreaming: 'windowschannel/player/streaming/8f370d',
+          request: 'windowschannel/player/request/15a6ec',
+          newStreaming: 'windowschannel/player/streaming/15a6ec',
         },
       },
       payloads:{
