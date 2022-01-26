@@ -5,13 +5,13 @@ services:
     #Include variables for allow https
     image: web-ui-dev
     restart: always
-    container_name: container-web-ui-dev
+    container_name: web-ui-cmi
     build:
       context: ./web-ui
       dockerfile: Dockerfile
     environment:      
-     - VIRTUAL_HOST=administradorcanales.windowschannel.com
-     - LETSENCRYPT_HOST=administradorcanales.windowschannel.com
+     - VIRTUAL_HOST=cmi.windowschannel.com
+     - LETSENCRYPT_HOST=cmi.windowschannel.com
      - LETSENCRYPT_EMAIL=info@windowschannel.com
      - VIRTUAL_PORT=8080
     volumes:
@@ -21,38 +21,37 @@ services:
      - "8080"
 
   nginx-rtmp-winbox:
-    container_name: server-rtmp-winbox
     restart: always
     build:
       context: ./server-rtmp-container
       dockerfile: Dockerfile
     environment:
-      - VIRTUAL_HOST=rtmpwindowschannelwinbox.windowschannel.com
-      - LETSENCRYPT_HOST=rtmpwindowschannelwinbox.windowschannel.com
+      - VIRTUAL_HOST=rtmpcmiinstitucional.windowschannel.us
+      - LETSENCRYPT_HOST=rtmpcmiinstitucional.windowschannel.us
       - LETSENCRYPT_EMAIL=info@windowschannel.com
-      - VIRTUAL_PORT=8080
+      - VIRTUAL_PORT=8010
     volumes:
-      - ./server-rtmp-container/oficina/nginx-winbox/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./server-rtmp-container/streamings/nginx-winbox/nginx.conf:/usr/local/nginx/conf/nginx.conf
     ports:
-      - 8080:8080
-      - 1935:1935
+      - 1937:1935
+      - 8010:8010
 
   nginx-rtmp-comercial:
-    container_name: server-rtmp-comercial
     restart: always
     build:
       context: ./server-rtmp-container
       dockerfile: Dockerfile
     environment:
-      - VIRTUAL_HOST=rtmpwindowschanneletb.windowschannel.com
-      - LETSENCRYPT_HOST=rtmpwindowschanneletb.windowschannel.com
+      - VIRTUAL_HOST=rtmpcmicomercial.windowschannel.us
+      - LETSENCRYPT_HOST=rtmpcmicomercial.windowschannel.us
       - LETSENCRYPT_EMAIL=info@windowschannel.com
-      - VIRTUAL_PORT=8090
+      - VIRTUAL_PORT=8011
     volumes:
-      - ./server-rtmp-container/oficina/nginx-etb-comercial/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./server-rtmp-container/streamings/nginx-comercial/nginx.conf:/usr/local/nginx/conf/nginx.conf
     ports:
-      - 8090:8090
-      - 1936:1935
+      - 1938:1935
+      - 8011:8011
+
   
   #Production
   # nginx-web:

@@ -62,7 +62,7 @@ export default {
         poster:'https://mediawebwordpress.nyc3.cdn.digitaloceanspaces.com/imbanaco/bgwc.png',
         sources: [ 
           { 
-            src:"https://rtmpwindowschanneletb.windowschannel.com/hls/comercial.m3u8",
+            src:"https://rtmpcmiinstitucional.windowschannel.us/hls/canalinstitucional.m3u8",
             type: "application/x-mpegURL" }
           ], 
       },
@@ -75,7 +75,7 @@ export default {
         poster:'https://mediawebwordpress.nyc3.cdn.digitaloceanspaces.com/imbanaco/bgcomercial.png',
         sources: [ 
           { 
-            src: "https://rtmpwindowschannelwinbox.windowschannel.com/hls/wcwinbox.m3u8",
+            src: "https://rtmp-cmi-comercial.windowschannel.us/hls/canalcomercial.m3u8",
             type: "application/x-mpegURL" }
           ], 
       },
