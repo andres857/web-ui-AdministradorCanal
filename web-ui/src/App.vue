@@ -36,7 +36,7 @@
 
 <style scoped>
   .navbar.navbar-dark.bg-dark{
-    background-color:#00B2A9!important;
+    background-color:#005823!important;
     /* E03E52 rojo */
  }
 </style>

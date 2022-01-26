@@ -10,8 +10,8 @@ services:
       context: ./web-ui
       dockerfile: Dockerfile
     environment:      
-     - VIRTUAL_HOST=cmi.windowschannel.com
-     - LETSENCRYPT_HOST=cmi.windowschannel.com
+     - VIRTUAL_HOST=fvl.windowschannel.com
+     - LETSENCRYPT_HOST=fvl.windowschannel.com
      - LETSENCRYPT_EMAIL=info@windowschannel.com
      - VIRTUAL_PORT=8080
     volumes:
@@ -26,32 +26,15 @@ services:
       context: ./server-rtmp-container
       dockerfile: Dockerfile
     environment:
-      - VIRTUAL_HOST=rtmpcmiinstitucional.windowschannel.us
-      - LETSENCRYPT_HOST=rtmpcmiinstitucional.windowschannel.us
+      - VIRTUAL_HOST=rtmpfvl.windowschannel.us
+      - LETSENCRYPT_HOST=rtmpfvl.windowschannel.us
       - LETSENCRYPT_EMAIL=info@windowschannel.com
-      - VIRTUAL_PORT=8010
+      - VIRTUAL_PORT=8012
     volumes:
       - ./server-rtmp-container/streamings/nginx-winbox/nginx.conf:/usr/local/nginx/conf/nginx.conf
     ports:
-      - 1937:1935
-      - 8010:8010
-
-  nginx-rtmp-comercial:
-    restart: always
-    build:
-      context: ./server-rtmp-container
-      dockerfile: Dockerfile
-    environment:
-      - VIRTUAL_HOST=rtmpcmicomercial.windowschannel.us
-      - LETSENCRYPT_HOST=rtmpcmicomercial.windowschannel.us
-      - LETSENCRYPT_EMAIL=info@windowschannel.com
-      - VIRTUAL_PORT=8011
-    volumes:
-      - ./server-rtmp-container/streamings/nginx-comercial/nginx.conf:/usr/local/nginx/conf/nginx.conf
-    ports:
-      - 1938:1935
-      - 8011:8011
-
+      - 1939:1935
+      - 8012:8012
   
   #Production
   # nginx-web:
